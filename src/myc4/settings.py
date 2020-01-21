@@ -78,7 +78,7 @@ WSGI_APPLICATION = 'myc4.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'myc4db',
+        'NAME': 'c4db',
         'USER': 'yurd',
         'PASSWORD': '',
         'HOST': '',
