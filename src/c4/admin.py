@@ -1,5 +1,4 @@
 from django.contrib import admin
-
 from .models import Game, Step
 
 # class StepInline(admin.TabularInline):

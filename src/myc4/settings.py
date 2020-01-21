@@ -31,7 +31,6 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -75,17 +74,6 @@ WSGI_APPLICATION = 'myc4.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'c4db',
-        'USER': 'yurd',
-        'PASSWORD': '',
-        'HOST': '',
-        'PORT': '',
-    }
-}
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -126,7 +114,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (
-  os.path.join(BASE_DIR, "static", "static_dev"),
+    os.path.join(BASE_DIR, "static", "static_dev"),
 )
 
 STATIC_ROOT = os.path.join(BASE_DIR, "static", "static_prod")
@@ -134,3 +122,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static", "static_prod")
 MEDIA_URL = '/media/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "static", "media")
+
+try:
+    from .local_settings import *
+except ImportError:
+    pass
