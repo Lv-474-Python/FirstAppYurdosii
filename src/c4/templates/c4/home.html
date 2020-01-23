@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block head_title %} Home {% endblock head_title %}
+
+{% block content %}
+    <div class='container-fluid'>
+        <div class='container'>
+            <div class='row'>
+                <div class="col-lg-6">
+                    <div class="left-content-title mt-5 pt-5 w-100 w-lg-50 text-left">
+                        My Connect 4
+                    </div>
+                    <div class="left-content-description mt-4 pt-4 w-50 text-left">
+                        {% comment %} MyC4 - My Connect four </br>  {% endcomment %}
+                        Created by Yurii Kosiv
+                    </div>
+                    <div class="left-content-btn mt-4 mr-5">
+                        <button type='button' class='btn btn-start-c4 w-50 py-2s' href="{% url '' %}"> Start new game</button>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="right-content">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

@@ -8,9 +8,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
 
-    {% include "snippets/css.html" %}
+    {% include "snippets/bootstrap.html" %}
+    <link rel = "stylesheet" type = "text/css" href = "{% static 'css/style_c4.css' %}" />
+
     {% block head_css %} {% endblock head_css %}
-    {% include "snippets/js.html" %}
 
     <title>{% block head_title %} {% endblock head_title %} | MyC4 </title>
   </head>
@@ -26,9 +27,6 @@
             </div>
         </div>
     </div>
-
-    {% comment %} {% block content-outside-main-block %}
-    {% endblock content-outside-main-block %} {% endcomment %}
 
     {% comment %} {% include "snippets/footer.html" %} {% endcomment %}
     {% block body_script %} {% endblock body_script %}
