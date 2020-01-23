@@ -1,0 +1,21 @@
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    {% include "snippets/bootstrap.html" %}
+    <link rel = "stylesheet" type = "text/css" href = "{% static 'css/style_auth.css' %}" />
+
+    <title>{% block head_title %} {% endblock head_title %} | MyC4 </title>
+  </head>
+  <body>
+        <div class="content-auth">
+              {% block content %} 
+              {% endblock content %}
+        </div>
+  </body>
+</html>

@@ -1,0 +1,84 @@
+html, body {
+    height: 100%;
+    font-family: Roboto;
+}
+
+.content-auth {
+    height: 100%;
+    /* background-color: #1B1F24; */
+}
+
+.other-content {
+    background-color: #1B1F24;
+}
+
+/* change bootstrap default */
+.row {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+
+/* auth page*/
+.auth {
+    background-color: #FFFFFF;
+}
+.auth .title {
+    font-style: normal;
+    font-weight: 500;
+    font-size: 3rem;
+
+    color: #0B1033
+}
+
+
+/* register form inputs */
+.c4-input {
+    padding: 1.4rem .75rem;
+    font-size: 0.9rem;
+}
+.c4-input:focus {
+    box-shadow: none;
+    box-shadow: .1rem .1rem .2rem .1rem #907b73;
+    border: 1px solid #ced4da;
+}
+.btn-c4 {
+    background-color: #1B1F24;
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 500;
+
+    /* border-radius: 0; */
+    /* width: 100%; */
+}
+.btn-c4:hover {
+    transition: 1s;
+    background-color: #ffffff;
+    border: 1px solid #1B1F24;
+    color: #1B1F24;
+}
+.btn-c4:focus {
+    opacity: 1.0;
+    color: #FFFFFF;
+    box-shadow: none;
+}
+
+
+/* already have an account part */
+.to-login {
+    color: #3E4A6A;
+}
+.link-login {
+    color: #1B1F24;
+}
+.link-login:hover {
+    color: #1B1F24;
+}
+
+
+/* form errors handling */
+.errorlist {
+    list-style: none;
+    color: red;
+    padding-left: 0;
+}

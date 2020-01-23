@@ -1,0 +1,78 @@
+{% extends "base_auth.html" %}
+
+{% block head_title %} Log In {% endblock head_title %}
+
+{% block content %}
+    <div class='row h-100'>
+        <div class='col-md-6 order-2 order-md-1 other-content'>
+        </div>
+
+        <div class='col-12 col-md-6 order-1 order-md-2 auth align-self-center'>
+            <!-- Log In title-->
+            <div class='title text-center'>
+                Log In
+            </div>
+
+            <!-- Sign up form -->
+            <form method="post" action="{% url 'auth:login' %}">{% csrf_token %}
+                <div class="form-group">
+                    <!-- Username input -->
+                    <div class="form-row">
+                        <div class="form-group col-8 offset-2 col-md-8 offset-md-2 col-lg-6 offset-lg-3 mt-4">
+                            {% if form.errors %}
+                                <div class='errorlist'>
+                                    <p>Your username and password don't match. Please try again.</p>
+                                </div>
+                            {% endif %}
+                            <label for="id_username">Username</label>
+                            <!-- autofocus="" -->
+                            <input 
+                                id="id_username" type="text" 
+                                name="username"
+                                autocapitalize="none" autocomplete="username"
+                                maxlength="150" 
+                                required="" class="form-control c4-input" placeholder="Your username" 
+                                {% if form.username.value %} 
+                                    value={{form.username.value}}
+                                {% endif %}
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Password input -->
+                    <div class="form-row">
+                        <div class="form-group col-8 offset-2 col-md-8 offset-md-2 col-lg-6 offset-lg-3 mt-2">
+                            <label for="id_password">Password</label>
+                            <input 
+                                id="id_password" type="password" 
+                                name="password" autocomplete="current-password"
+                                required="" 
+                                class="form-control c4-input"
+                                placeholder="Enter password"
+                                {% if form.password1.value %} 
+                                    value={{form.password1.value}} 
+                                {% endif %}
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Log In button -->
+                    <div class="form-row">
+                        <div class="form-group col-8 offset-2 col-md-8 offset-md-2 col-lg-6 offset-lg-3 mt-4">
+                            <button type="submit" class="btn btn-c4 py-2 w-100">Log In</button>
+                        </div>
+                    </div>
+
+                    <!-- Already have an account part -->
+                    <div class="form-row">
+                        <div class="form-group col-md-6 offset-md-3 text-center">
+                            <p class='to-login'>Don't have an account yet? <a class='link-login' href='{% url 'auth:signup' %}'>Join MyC4</a></p>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+        {% comment %} {{form.as_p}} {% endcomment %}
+        </div>
+    </div>
+{% endblock content %}
