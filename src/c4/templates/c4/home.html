@@ -15,7 +15,11 @@
                         Created by Yurii Kosiv
                     </div>
                     <div class="left-content-btn mt-4 mr-5">
-                        <button type='button' class='btn btn-start-c4 w-50 py-2s' href="#"> Start new game</button>
+                        {% if request.user.is_authenticated %}
+                            <a type='button' class='btn btn-start-c4 w-50 py-2s' href="#"> Start new game</a>
+                        {% else %}
+                            <a type='button' class='btn btn-start-c4 w-50 py-2s disabled' href="#"> Start new game</a>
+                        {% endif %}
                     </div>
                 </div>
                 <div class="col-lg-6">

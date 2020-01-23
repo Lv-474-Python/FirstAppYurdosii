@@ -28,7 +28,20 @@ body {
 }
 .c4-nav-link:hover{
     transition: 0.2s;
-    color: rgb(109, 109, 109) !important;
+    color: rgb(144, 135, 135) !important;
+}
+.c4-nav-btn {
+    /* color: #0B1033 !important; */
+    background-color: #ffffff;
+    border: 1px solid #0B1033;
+    font-weight: 500;
+    border-radius: 8px;
+}
+.c4-nav-btn:hover {
+    transition: 0.6s;
+    color: #ffffff !important;
+    background-color: #0B1033;
+    border: 1px solid #ffffff;
 }
 
 /* Home page: Left content */

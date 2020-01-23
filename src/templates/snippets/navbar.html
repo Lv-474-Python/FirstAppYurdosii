@@ -14,18 +14,36 @@
 
     <div class="collapse navbar-collapse" id="c4Navbar">
         <ul class="navbar-nav ml-auto">
-            <li class="nav-item ml-3 ml-lg-5 pl-lg-4">
+            <li class="nav-item ml-1 ml-lg-2 pl-lg-4 text-center pb-1">
                 <a class="nav-link c4-nav-link" href="{% url 'c4:home' %}">Home <span class="sr-only">(current)</span></a>
             </li>
-            <li class="nav-item ml-3 ml-lg-5 pl-lg-4">
-                <a class="nav-link c4-nav-link" href="#">New Game</a>
+            <li class="nav-item ml-1 ml-lg-2 pl-lg-4 text-center pb-1">
+                {% if request.user.is_authenticated %}    
+                    <a class="nav-link c4-nav-link" href="#">New Game</a>
+                {% else %}
+                    <a class="nav-link c4-nav-link disabled" href="#">New Game</a>
+                {% endif %}
             </li>
-            <li class="nav-item ml-3 ml-lg-5 pl-lg-4">
+            <li class="nav-item ml-1 ml-lg-2 pl-lg-4 text-center pb-1">
                 <a class="nav-link c4-nav-link" href="#">My History</a>
             </li>
-            <li class="nav-item ml-3 ml-lg-5 pl-lg-4">
+            <li class="nav-item ml-1 ml-lg-2 pl-lg-4 text-center pb-1">
                 <a class="nav-link c4-nav-link" href="{% url 'c4:rules' %}">Rules</a>
             </li>
+
+            {% if request.user.is_authenticated %}
+                <li class="nav-item ml-1 ml-lg-2 pl-lg-4 text-center pb-1">
+                    <a type='button' class="nav-link c4-nav-link c4-nav-btn" href="{% url 'auth:logout' %}">Log Out</a>
+                </li>
+            {% else %}
+                <li class="nav-item ml-1 ml-lg-2 pl-lg-4 text-center pb-1">
+                    <a type='button' class="nav-link c4-nav-link c4-nav-btn" href="{% url 'auth:signup' %}">Sign Up</a>
+                </li>
+                <li class="nav-item ml-1 ml-lg-2 pl-lg-4 text-center pb-1">
+                    <a type='button' class="nav-link c4-nav-link c4-nav-btn" href="{% url 'auth:login' %}">Log In</a>
+                </li>
+            {% endif %}
+            
         </ul>
     </div>
 
