@@ -3,11 +3,11 @@ from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import User
 
-# User = settings.AUTH_USER_MODEL
 
 class Game(models.Model):
-    """Model representing a game history item of 2 players"""
-    
+    """
+        Model representing a game history item of 2 players
+    """
     player_1 = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
@@ -37,17 +37,22 @@ class Game(models.Model):
 
     # Methods
     def get_absolute_url(self):
-        """Returns the url to access a particular instance of Game"""
+        """
+            Returns the url to access a particular instance of Game
+        """
         return reverse("game_detail", kwargs={"pk": self.pk})
-    
+   
     def __str__(self):
-        """"String for representing the Game object"""
+        """
+            String for representing the Game object
+        """
         return f'Game#{self.pk} - {self.player_1.name} vs {self.player_2.name}'
 
 
 class Step(models.Model):
-    """Model representing a step in game made by used"""
-
+    """
+        Model representing a step in game made by used
+    """
     # Fields
     game = models.ForeignKey(
         Game,
@@ -70,9 +75,13 @@ class Step(models.Model):
     
     # Methods
     def get_absolute_url(self):
-        """Returns the url to access a particular instance of Step"""
+        """
+            Returns the url to access a particular instance of Step
+        """
         return reverse("step_detail", kwargs={"pk": self.pk})
 
     def __str__(self):
-        """"String for representing the Step object"""
+        """"
+            String for representing the Step object
+        """
         return f'Game#{self.game.pk}: step#{self.pk} by {self.user.name} in [{self.x}, {self.y}]'
