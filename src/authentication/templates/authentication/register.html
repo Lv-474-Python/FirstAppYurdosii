@@ -1,0 +1,108 @@
+{% extends "base_auth.html" %}
+
+{% block head_title %} Sign Up {% endblock head_title %}
+
+{% block content %}
+    <div class='row h-100'>
+        <div class='col-12, col-md-6 auth align-self-center'>
+            <!-- Sign Up title-->
+            <div class='title text-center'>
+                Sign up
+            </div>
+
+            <!-- Sign up form -->
+            <form method="post" action="{% url 'auth:signup' %}">{% csrf_token %}
+                <div class="form-group">
+                    <!-- Username input -->
+                    <div class="form-row">
+                        <div class="form-group col-8 offset-2 col-md-8 offset-md-2 col-lg-6 offset-lg-3 mt-4">
+                            {% if form.errors.username %}
+                                {{form.errors.username}}
+                            {% endif %}
+                            <label for="id_username">Username</label>
+                            <input 
+                                id="id_username" type="text" 
+                                name="username" maxlength="150" 
+                                required="" class="form-control c4-input" placeholder="Your username" 
+                                {% if form.username.value %} 
+                                    value={{form.username.value}}
+                                {% endif %}
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Email input -->
+                    <div class="form-row">
+                        <div class="form-group col-8 offset-2 col-md-8 offset-md-2 col-lg-6 offset-lg-3 mt-2">
+                            {% if form.errors.email %}
+                                {{form.errors.email}}
+                            {% endif %}
+                            <label for="id_email">Email</label>
+                            <input 
+                                id="id_email" type="email" 
+                                name="email" maxlenth="254" 
+                                class="form-control c4-input"
+                                placeholder="Your email"
+                                {% if form.email.value %} 
+                                    value={{form.email.value}}
+                                {% endif %}
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Password 1 input -->
+                    <div class="form-row">
+                        <div class="form-group col-8 offset-2 col-md-8 offset-md-2 col-lg-6 offset-lg-3 mt-2">
+                            {% if form.errors.password2 %}
+                                {{form.errors.password2}}
+                            {% endif %}
+                            <label for="id_password1">Password</label>
+                            <input 
+                                id="id_password1" type="password" 
+                                name="password1" required="" 
+                                class="form-control c4-input"
+                                placeholder="Enter password"
+                                {% if form.password1.value %} 
+                                    value={{form.password1.value}} 
+                                {% endif %}
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Password 2 input -->
+                    <div class="form-row">
+                        <div class="form-group col-8 offset-2 col-md-8 offset-md-2 col-lg-6 offset-lg-3 mt-2">
+                            <label for="id_password2">Password again</label>
+                            <input 
+                                id="id_password2" type="password" 
+                                name="password2" required="" 
+                                class="form-control c4-input" 
+                                placeholder="Enter password"
+                                {% if form.password2.value %} 
+                                value={{form.password2.value}} {% endif %}
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Sign Up button -->
+                    <div class="form-row">
+                        <div class="form-group col-8 offset-2 col-md-8 offset-md-2 col-lg-6 offset-lg-3 mt-4">
+                            <button type="submit" class="btn btn-c4 py-2 w-100">Sign Up</button>
+                        </div>
+                    </div>
+
+                    <!-- Already have an account part -->
+                    <div class="form-row">
+                        <div class="form-group col-md-6 offset-md-3 text-center">
+                            <p class='to-login'>Already have an account? <a class='link-login' href='{% url 'auth:login' %}'>Log In</a></p>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+        {% comment %} {{form.as_p}} {% endcomment %}
+        </div>
+        <div class='col-md-6 other-content'>
+        </div>
+    </div>
+{% endblock content %}
