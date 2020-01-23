@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'c4'
+    'c4',
+    'authentication',
 ]
 
 MIDDLEWARE = [
@@ -122,6 +123,9 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static", "static_prod")
 MEDIA_URL = '/media/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "static", "media")
+
+LOGOUT_REDIRECT_URL = '/auth/login/'
+LOGIN_REDIRECT_URL = '/home/'
 
 try:
     from .local_settings import *
