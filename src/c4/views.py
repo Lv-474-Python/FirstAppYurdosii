@@ -10,5 +10,5 @@ class HomeView(LoginRequiredMixin, TemplateView):
         print(context)
         return context
 
-class RulesView(TemplateView):
-    template_name = "c4/rules.html"
+# class RulesView(TemplateView):
+#     template_name = "c4/rules.html"

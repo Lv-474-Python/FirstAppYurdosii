@@ -55,3 +55,16 @@ body {
 .btn-start-c4:focus {
     box-shadow: none;
 }
+
+/* Rules page */
+.rules-title {
+    font-weight: 500;
+    font-size: 2.5rem;   
+}
+.rules-description {
+    font-size: 1.4rem;
+}
+.rules-description-title {
+    font-size: 1.7rem;
+    text-decoration: underline;
+}
