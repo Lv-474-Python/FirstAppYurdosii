@@ -26,12 +26,12 @@ class Game(models.Model):
         related_name='game_winner',
         null=True
     )
-    start = models.DateTimeField()
+    start = models.DateTimeField(null=True)
     end = models.DateTimeField(null=True)
 
     # Metadata
     class Meta:
-        ordering = ['-pk']
+        ordering = ['-pk'] # '-end'
         verbose_name = "Game"
         verbose_name_plural = "Games"
 
@@ -46,7 +46,7 @@ class Game(models.Model):
         """
             String for representing the Game object
         """
-        return f'Game#{self.pk} - {self.player_1.name} vs {self.player_2.name}'
+        return f'Game#{self.pk} - {self.player_1.username} vs {self.player_2.username}'
 
 
 class Step(models.Model):
@@ -70,6 +70,7 @@ class Step(models.Model):
 
     # Metadata
     class Meta:
+        ordering = ['pk']
         verbose_name = "Step"
         verbose_name_plural = "Steps"
     
@@ -84,4 +85,12 @@ class Step(models.Model):
         """"
             String for representing the Step object
         """
-        return f'Game#{self.game.pk}: step#{self.pk} by {self.user.name} in [{self.x}, {self.y}]'
+        return f'Game#{self.game.pk}: step#{self.pk} by {self.user.username} in [{self.x}, {self.y}]'
+
+"""
+from django.contrib.auth.models import User
+from c4.models import Game
+user1 = User.objects.get(username='sapa')
+user2 = User.objects.get(username='user2')
+game = Game(player_1=user1, player_2=user2)
+"""
