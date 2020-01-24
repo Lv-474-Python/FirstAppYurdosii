@@ -9,7 +9,8 @@
 
 
     {% include "snippets/bootstrap.html" %}
-    <link rel = "stylesheet" type = "text/css" href = "{% static 'css/style_c4.css' %}" />
+    {% include "snippets/c4_imports.html" %}
+    
 
     {% block head_css %} {% endblock head_css %}
 

@@ -128,7 +128,14 @@ LOGOUT_REDIRECT_URL = '/auth/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = '/auth/login'
 
+
+# Database
 try:
     from .local_settings import *
 except ImportError:
     pass
+
+
+# Constants
+C4_ROW_NUMBER = 6
+C4_COLUMN_NUMBER = 7
