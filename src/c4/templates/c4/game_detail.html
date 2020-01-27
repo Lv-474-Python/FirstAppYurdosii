@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% load c4_tags %}
+
+{% block head_title %}Game{% endblock head_title %}
+
+
+{% block content %}
+
+
+<div class="container">
+<div class="row">
+    <div class="col-lg-8 offset-lg-2">
+        
+        <!-- Game detail title -->
+        <div class="game-detail-title text-center mt-3">
+            Game #{{game.pk}}: {{game.player_1.username}} vs {{game.player_2.username}}
+        </div>
+        
+        <!-- Game detail player's move -->
+        <div class="game-detail-move text-center mt-2">
+            {{turn_username}} turn
+        </div>
+
+        {% comment %} {{ yura }}
+        {{ map.5.3 }}
+        {{ map }} {% endcomment %}
+        {% csrf_token %}
+
+        <!-- Game map -->
+        <div class="game-detail-map text-center mt-4 pt-2">
+            <div class="table-responsive">
+            <table class="table table-c4">
+
+            {% comment %} {% if map.i.j == "0" %}
+                                    class="map-item py-4" 
+                                {% elif map.i.j == 1 %}
+                                    class="map-item py-4 player-1" 
+                                {% else %}
+                                    class="map-item py-4 player-2" 
+                                {% endif %} {% endcomment %}
+            <tbody>
+                {% for i in rows %}
+                    <tr>
+                        {% for j in columns  %}
+                        <td class='map-cell'>
+                            {% with cell_value=map|my_index:i|my_index:j %}
+                                <div 
+                                    class="{{'map-item py-4 player-'|change_class:cell_value}}"
+                                    style="cursor: pointer;"
+                                    y="{{i|add:1}}"
+                                    x="{{j|add:1}}"
+                                    onclick='cellHandler(this)'
+                                >
+                            {% endwith %}
+                                <p></p>
+                            </div>
+                        </td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+            </table>
+            </div>
+        </div>
+    
+        <!-- Game map info-->
+        <div class="game-detail-map-info mt-1">
+            <div class="row">
+
+                <!-- Player 1 info -->
+                <div class="col-4 text-center">
+                    <div class="game-detail-player">
+                        {{game.player_1.username}}
+                    </div>
+                    <div class="game-detail-player1-color w-50 mx-auto">
+                        <table class="table table-borderless">
+                        <tbody> 
+                        <tr>
+                            <td class='map-cell'>
+                                <div class="map-item-player1 py-4 mx-2">
+                                    <p></p>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Game duration -->
+                <div class="col-4 text-center">
+                    <div class="game-duration-title">
+                        Duration
+                    </div>
+                    <div class="game-duration-time pt-3">
+                        {{game.start_datetime|date:"F d, Y"}}
+                        {{game.start_datetime|time:"H:i:s"}}
+                    </div>
+                </div>
+
+                <!-- Player 2 info -->
+                <div class="col-4 text-center">
+                    <div class="game-detail-player">
+                        {{game.player_2.username}}
+                    </div>
+                    <div class="game-detail-player1-color w-50 mx-auto">
+                        <table class="table table-borderless">
+                        <tbody> 
+                        <tr>
+                            <td class='map-cell'>
+                                <div class="map-item-player2 py-4 mx-2">
+                                    <p></p>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock content %}
+
+{% comment %} {% with map_i=forloop.parentloop.counter0 map_j=forloop.counter0 %}
+    <p>{{ map|my_index:map_i|my_index:map_j}}</p>
+{% endwith %} {% endcomment %}
+
+{% comment %} """
+from django.contrib.auth.models import User
+from c4.models import Game, Step
+user1 = User.objects.get(username='sapa')
+user2 = User.objects.get(username='user2')
+game = Game.objects.all().first()
+ 
+    from datetime import datetime
+    game = Game(player_1=user1, player_2=user2, start_datetime=datetime.now())
+    game.save()
+
+step1 = Step(game=game, user=user1, x=3, y=6)
+step2 = Step(game=game, user=user2, x=4, y=6)
+step3 = Step(game=game, user=user1, x=3, y=5)
+step1.save()
+step2.save()
+step3.save()
+""" {% endcomment %}

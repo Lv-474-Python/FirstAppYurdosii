@@ -1,0 +1,3 @@
+# Constants
+C4_ROW_NUMBER = 6
+C4_COLUMN_NUMBER = 7
