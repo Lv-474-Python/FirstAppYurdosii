@@ -1,4 +1,3 @@
-from django.shortcuts import redirect
 from django.http import HttpResponseRedirect
 from django.views.generic import CreateView
 
@@ -16,7 +15,7 @@ class RegisterCreateView(CreateView):
         print(context)
         return context
 
-    def dispatch(self, *args, **kwargs):
+    def dispatch(self, request, *args, **kwargs):
         if self.request.user.is_authenticated:
             return HttpResponseRedirect("/")
         return super().dispatch(*args, **kwargs)

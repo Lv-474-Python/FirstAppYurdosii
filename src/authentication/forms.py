@@ -3,10 +3,18 @@ from django.contrib.auth.models import User
 
 
 class RegisterForm(forms.ModelForm):
-    """
-        Form for creating new users
-        Includes the required fields (username, email) 
-        plus a repeated password
+    """Form to register new user
+
+    Arguments:
+        forms {[type]} -- [description]
+
+    Raises:
+        forms.ValidationError: if user with provided username already exists
+        forms.ValidationError: if user with provided email already exists
+        forms.ValidationError: if two provided passwords don't match
+
+    Returns:
+        [type] -- [description]
     """
 
     password1 = forms.CharField()
@@ -18,8 +26,13 @@ class RegisterForm(forms.ModelForm):
         fields = ("username", "email")
 
     def clean_username(self):
-        """
-            Check whether user with provided username exists
+        """Check whether user with provided username exists
+
+        Raises:
+            forms.ValidationError: if user with this username already exists
+
+        Returns:
+            string -- username
         """
         print('clean_username')
         username = self.cleaned_data.get("username")
@@ -29,8 +42,13 @@ class RegisterForm(forms.ModelForm):
         return username
 
     def clean_email(self):
-        """
-            Check whether user with provided email exists
+        """Check whether user with provided email exists
+
+        Raises:
+            forms.ValidationError: if user with this email already exists
+
+        Returns:
+            string -- email
         """
         email = self.cleaned_data.get("email")
         qs = User.objects.filter(email__iexact=email)
@@ -39,8 +57,13 @@ class RegisterForm(forms.ModelForm):
         return email
 
     def clean_password2(self):
-        """
-            Check that the two password entries match
+        """Check that the two password entries match
+
+        Raises:
+            forms.ValidationError: if two passwords don't match
+
+        Returns:
+            string -- password
         """
         password1 = self.cleaned_data.get("password1")
         password2 = self.cleaned_data.get("password2")
@@ -49,8 +72,13 @@ class RegisterForm(forms.ModelForm):
         return password2
 
     def save(self, commit=True):
-        """
-            Save the provided hashed password
+        """Save created user
+
+        Keyword Arguments:
+            commit {bool} -- whether saving should be commited (default: {True})
+
+        Returns:
+            django.contrib.auth.models.User -- created user
         """
         user = super(RegisterForm, self).save(commit=False)
         user.set_password(self.cleaned_data["password1"])

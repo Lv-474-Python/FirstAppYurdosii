@@ -72,10 +72,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'myc4.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/3.0/ref/settings/#databases
-
-
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
 
@@ -120,22 +116,30 @@ STATICFILES_DIRS = (
 
 STATIC_ROOT = os.path.join(BASE_DIR, "static", "static_prod")
 
+STATICFILES_FINDERS = [
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'npm.finders.NpmFinder',
+]
+
 MEDIA_URL = '/media/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "static", "media")
 
+
+# Login / logout urls
 LOGOUT_REDIRECT_URL = '/auth/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = '/auth/login'
 
 
 # Database
+# https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 try:
     from .local_settings import *
 except ImportError:
     pass
 
 
-# Constants
-C4_ROW_NUMBER = 6
-C4_COLUMN_NUMBER = 7
+# Npm
+NPM_STATIC_FILES_PREFIX = os.path.join('js', 'lib')
