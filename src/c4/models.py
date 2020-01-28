@@ -12,13 +12,13 @@ class Game(models.Model):
     player_1 = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
-        related_name='game_player_1',
+        related_name='games_p1',
         null=True
     )
     player_2 = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
-        related_name='game_player_2',
+        related_name='games_p2',
         null=True
     )
     winner = models.ForeignKey(
@@ -29,6 +29,7 @@ class Game(models.Model):
     )
     start_datetime = models.DateTimeField(null=True)
     end_datetime = models.DateTimeField(null=True)
+    is_accepted = models.BooleanField(default=False)
 
     # Metadata
     class Meta:
@@ -51,9 +52,10 @@ class Game(models.Model):
         Returns:
             string -- representing of Game object
         """
-        return f'Game#{self.pk} - {self.player_1.username} vs {self.player_2.username}'
+        return f'Game#{self.pk} - {self.player_1.username} vs {self.player_2.username}. Accepted - {self.is_accepted} '
 
     def get_step_map(self):
+        #TODO - enum на значення карти
         """Return map of steps of the current game.
 
         Map values:
@@ -83,6 +85,28 @@ class Game(models.Model):
         """
         last_user = Step.object.filter(game=self).user
         return self.player_1 if last_user == self.player_2 else self.player_2
+
+    @staticmethod
+    def create(player_1, player_2, is_accepted):
+        """Create new game
+        
+        Arguments:
+            player_1 {User} -- player_1
+            player_2 {User} -- player_2
+            is_accepted {bool} -- whether game is accepted by player_2
+        
+        Returns:
+            Game -- created Game object
+        """        
+        game = Game(player_1=player_1, player_2=player_2, is_accepted=is_accepted)
+        try:
+            game.save()
+            return game
+        except IntegrityError:
+            return None
+
+
+    # TODO - метод get user games - і типу приймає юзера і вертає ігри суми коли він був як першим гравцем, так і другим
 
 
 class Step(models.Model):

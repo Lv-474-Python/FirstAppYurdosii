@@ -9,7 +9,7 @@ body {
     max-height: 100%;
     font-family: 'Roboto', sans-serif;
     background-color: #ffffff;
-    color: #0B1033;
+    color: #1B1F24;
 }
 
 
@@ -134,16 +134,21 @@ body {
     font-size: 1.5rem;
 }
 
-.map-item-player1, .map-item-player2 {
+.map-item-player1, 
+.map-item-player2 {
     /* border: 1px solid black; */
     border-radius: 50%;
 }
 
-.map-item-player1, .player-1, .player-1:hover {
+.map-item-player1, 
+.player-1, 
+.player-1:hover {
     background-color: yellow;
 }
 
-.map-item-player2, .player-2, .player-2:hover {
+.map-item-player2, 
+.player-2, 
+.player-2:hover {
     background-color: red;
 }
 
@@ -159,4 +164,98 @@ body {
 
 .jq-toast-single {
     font-size: 1rem !important;
+}
+
+
+/* New game page */
+.new-game-title {
+    font-size: 2rem;
+}
+
+.new-game-search-btn:hover, 
+.new-game-search-btn:focus,
+.new-game-search-input:hover,
+.new-game-search-input:focus {
+    box-shadow: none;
+}
+.new-game-search-btn,
+.new-game-search-input{
+    border: 1px solid black;
+}
+.new-game-search-btn:hover {
+    color: white;
+    background-color: black;
+}
+.new-game-search-input:focus {
+    border: 1px solid black;
+    box-shadow: .1rem .1rem .2rem .0rem #907b73;
+}
+
+
+.new-game-user {
+    border: 1px solid black;
+    border-radius: 10px;
+}
+
+.new-game-user-title {
+    font-size: 1.6rem;
+}
+
+.new-game-user-btn {
+    border: 1px solid #1B1F24;
+    color: white;
+    background-color: #1B1F24;
+    border-radius: 10px;
+}
+
+.new-game-user-btn:hover {
+    transition: 0.8s;
+    color: #1B1F24;
+    background-color: white;
+}
+
+.new-game-user-btn:focus, 
+.new-game-user-btn-sent:focus {
+    box-shadow: none;
+}
+
+.new-game-user-btn-sent, 
+.new-game-user-btn-sent:hover,
+.new-game-user-btn-sent:disabled {
+    opacity: 0.9;
+    color: white;
+    background-color: green;
+    cursor: default;
+}
+
+
+.new-game-pagination {
+    font-size: 1.5rem;
+}
+
+.new-game-page-btn {
+    border: 1px solid black;
+    border-radius: 5px;
+    color: #1B1F24;
+    font-size: 1.5rem;
+}
+
+.new-game-page-btn:hover {
+    transition: 0.5s;
+    border: 1px solid black;
+    border-radius: 5px;
+    color: white;
+    background-color: #1B1F24;
+    font-size: 1.5rem;
+
+    text-decoration: none;
+}
+
+.new-game-page-btn-disabled {
+    border: 1px solid black;
+    border-radius: 5px;
+    color: white !important;
+    background-color: #666;
+    pointer-events: none;
+    opacity: 0.5;
 }

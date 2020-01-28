@@ -3,9 +3,13 @@
 
 {% block head_title %}Game{% endblock head_title %}
 
+{% block head_import %}
+    <script src="{% static 'js/script_c4.js' %}"></script>
+{% endblock head_import %}
+
 
 {% block content %}
-
+{% csrf_token %}
 
 <div class="container">
 <div class="row">
@@ -24,7 +28,7 @@
         {% comment %} {{ yura }}
         {{ map.5.3 }}
         {{ map }} {% endcomment %}
-        {% csrf_token %}
+        
 
         <!-- Game map -->
         <div class="game-detail-map text-center mt-4 pt-2">
@@ -123,6 +127,7 @@
     </div>
 </div>
 </div>
+
 {% endblock content %}
 
 {% comment %} {% with map_i=forloop.parentloop.counter0 map_j=forloop.counter0 %}

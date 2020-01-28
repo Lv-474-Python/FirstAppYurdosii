@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+{% block head_title %}My history{% endblock head_title %}
+
+
+{% block head_import %}
+    {% comment %} <script src="{% static 'js/script_c4_new_game.js' %}"></script> {% endcomment %}
+{% endblock head_import %}
+
+
+{% block content %}
+{% csrf_token %}
+
+<div class="container">
+<div class="row">
+    <div class="col-12 col-lg-10 offset-lg-1 col-xl-8 offset-xl-2">
+
+        <!-- New game title -->
+        <div class='new-game-title text-center mt-5'>
+            Players to play with
+        </div>
+
+        <!-- Search form -->
+        <div class='new-game-search pl-5 pt-4'>
+            <div class="row">
+                <div class="col-11 col-sm-12">
+                    <form method='GET' action="." class="form-inline m-2 my-lg-0">
+                        <input class="form-control new-game-search-input mr-sm-2" type="search" placeholder="Search player" name='q' value="{{request.GET.q}}" aria-label="Search">
+                        <button class="btn new-game-search-btn my-2 my-sm-0" type="submit">Search</button>
+                        <input type='hidden' name='page' value="{{1}}" />
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Players to play with -->
+        <div class='new-game-users mt-3'>
+            {% for user in users  %}
+                <div class='new-game-user px-4 py-3 mb-2 mx-5'>
+                <div class='row'>
+                    <div class='col-12 col-sm-4 col-lg-8 text-center text-sm-left'>
+                        <div class='new-game-user-title'>
+                            {{user.username}}
+                        </div>
+                    </div>
+                    <div class='col-12 col-sm-8 col-lg-4'>
+                        {% if request.user|is_game_with_false_accepted_exist:user%}
+                            <button type="button" 
+                            class="btn py-2 w-100 new-game-user-btn-sent"
+                            user="{{user.username}}" onclick="requestNewGameHandler(this)"
+                            disabled="True">Request sent. Wait</button>
+                        {% else %}
+                        <button type="button" 
+                            class="btn py-2 w-100 new-game-user-btn"
+                            user="{{user.username}}" onclick="requestNewGameHandler(this)">Send request to play</button>
+                        {% endif %}
+                    </div>
+                </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        <!-- //TODO - responsive pagination menu-->
+        <div class="pagination new-game-pagination justify-content-center mt-4">
+            <span class="step-links text-center">
+                {% if page_obj.has_previous %}
+                    <a class='new-game-page-btn px-2 py-1' type='button' href="?page=1">&laquo; first</a>
+                    <a class='new-game-page-btn px-2 py-1' type='button' href="?page={{ page_obj.previous_page_number }}">&lsaquo; previous</a>
+                {% else %}
+                    <a class='new-game-page-btn-disabled px-2 py-1' type='button'>&laquo; first</a>
+                    <a class='new-game-page-btn-disabled px-2 py-1' type='button'>&lsaquo; prev</a>
+                {% endif %}
+
+                <span class="current">
+                    Page {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+                </span>
+
+                {% if page_obj.has_next %}
+                    <a class='new-game-page-btn px-2 py-1' type='button' href="?page={{ page_obj.next_page_number }}">next &rsaquo;</a>
+                    <a class='new-game-page-btn px-2 py-1' type='button' href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+                {% else %}
+                    <a class='new-game-page-btn-disabled px-2 py-1' type='button'>next &rsaquo;</a>
+                    <a class='new-game-page-btn-disabled px-2 py-1' type='button'>last &raquo;</a>
+                {% endif %}
+            </span>
+        </div>
+
+    </div>
+</div>
+</div>
+
+{% endblock content %}

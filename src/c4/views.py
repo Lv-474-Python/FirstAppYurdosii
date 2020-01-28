@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.views.generic import (
-    TemplateView, DetailView
+    TemplateView, DetailView, ListView
 )
 from django.http import (
     JsonResponse, HttpResponseNotFound, HttpResponseRedirect
@@ -11,6 +11,7 @@ from django.http import (
 
 from utils.constants import C4_ROW_NUMBER, C4_COLUMN_NUMBER
 from .models import Game, Step
+from .forms import GameForm
 
 
 class HomeView(TemplateView):
@@ -97,3 +98,37 @@ def whether_my_move(request, *args, **kwargs):
         return JsonResponse({'my_move': my_move})
     except User.DoesNotExist:
         return HttpResponseNotFound('<h1>Not Found</h1>')
+
+
+class UserNewGameListView(LoginRequiredMixin, ListView):
+    model = User
+    context_object_name = 'users'
+    template_name="c4/new_game.html"
+    paginate_by = 7
+
+    def get_queryset(self):
+        query = super().get_queryset()
+        result = query.exclude(pk=self.request.user.pk)
+        q = self.request.GET.get('q', None)
+        if q: result = result.filter(username__icontains=q)
+        # import pdb
+        # pdb.set_trace()
+        return result
+
+    def post(self, request, *args, **kwargs):
+        """Post request for creating new game 
+
+        Arguments:
+            request {WSGIRequest} -- request
+
+        Returns:
+            JsonResponse -- JsonResponse with status (whether post request was successful)
+        """
+        player_2_username = request.POST['player_2_username']
+        player_2 = User.objects.filter(username=player_2_username)[0]
+        player_1 = request.user
+        status = None
+        if Game.create(player_1=player_1, player_2=player_2, is_accepted=False):
+            status = True
+        else: status = False
+        return JsonResponse({'status': status})

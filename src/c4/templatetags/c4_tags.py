@@ -1,5 +1,7 @@
 from django import template
 
+from ..models import Game
+
 #https://docs.djangoproject.com/en/3.0/howto/custom-template-tags/
 
 
@@ -30,3 +32,22 @@ def change_class(class_value, addition):
         string -- new class value
     """
     return class_value + str(addition)
+
+
+@register.filter
+def is_game_with_false_accepted_exist(player_1, player_2):
+    """Check whether game with given players and is_accepted=False exists
+
+    Arguments:
+        player_1 {User} -- player_1
+        player_2 {User} -- player_2
+
+    Returns:
+        bool -- whether game exists
+    """
+    games = Game.objects.filter(
+        player_1=player_1,
+        player_2=player_2,
+        is_accepted=False
+    )
+    return True if games else False

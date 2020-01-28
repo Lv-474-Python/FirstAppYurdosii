@@ -40,7 +40,7 @@ function cellHandler(cell) {
     let data = {};
     data.x = parseInt(cell.attributes["x"].nodeValue);
     data.y = parseInt(cell.attributes["y"].nodeValue);
-    data["csrfmiddlewaretoken"] = document.getElementsByName("csrfmiddlewaretoken")[0].value;;
+    data["csrfmiddlewaretoken"] = document.getElementsByName("csrfmiddlewaretoken")[0].value;
     const url = document.location.href;
     console.log(data)
     console.log(url)
