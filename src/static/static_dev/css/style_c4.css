@@ -8,8 +8,8 @@ body {
     height: 100%;
     max-height: 100%;
     font-family: 'Roboto', sans-serif;
-    background-color: #ffffff;
     color: #1B1F24;
+    background-color: #ffffff;
 }
 
 
@@ -168,7 +168,7 @@ body {
 
 
 /* New game page */
-.new-game-title {
+.new-game-title, .history-title {
     font-size: 2rem;
 }
 
@@ -258,4 +258,84 @@ body {
     background-color: #666;
     pointer-events: none;
     opacity: 0.5;
+}
+
+
+/* History page */
+.history-game {
+    border: 1px solid black;
+    border-radius: 10px;
+    /* background-color: rgb(71, 226, 71); */
+}
+/* statuses */
+.history-game-won {
+    background-color: rgb(22, 238, 22);
+}
+.history-game-lost {
+    background-color: #ff1616;
+}
+.history-game-progress {
+    background-color: #eaea44;
+}
+.history-game-waiting {
+    background-color: rgb(198, 198, 198);
+}
+.history-game-accept {
+    background-color: #ffffff;
+}
+.history-game-declined {
+    background-color: #fd4545;
+}
+.history-game-rejected {
+    background-color: #b32828;
+}
+
+.history-game-title, .history-game-status-title {
+    font-size: 1.6rem;
+}
+.history-game-title a {
+    font-size: 1.7rem;
+    color: #1B1F24;
+}
+.history-game-title a:hover {
+    font-size: 1.7rem;
+    color: #1B1F24;
+}
+.history-game-players {
+    font-size: 1.2rem;
+}
+.history-game-player {
+    font-weight: 300;
+}
+.history-game-moves {
+    font-size: 1.2rem;
+    font-weight: 300;
+}
+.history-game-status-title-value {
+    font-size: 1.05rem;
+    /* border: 1px solid black; */
+}
+.history-game-status-accept-btn {
+    border: 1px solid rgb(6, 166, 6);
+    color: rgb(6, 166, 6);
+    background-color: #fff;
+}
+.history-game-status-accept-btn:hover {
+    border: 1px solid #fff;
+    color: #fff;
+    background-color: rgb(6, 166, 6);
+}
+.history-game-status-decline-btn {
+    border: 1px solid rgb(255, 0, 0);
+    color: rgb(255, 0, 0);
+    background-color: #fff;
+}
+.history-game-status-decline-btn:hover {
+    border: 1px solid #fff;
+    color: #fff;
+    background-color: rgb(255, 0, 0);
+}
+.history-game-status-accept-btn:focus,
+.history-game-status-decline-btn:focus {
+    box-shadow: none;
 }

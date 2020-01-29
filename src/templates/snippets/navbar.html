@@ -25,7 +25,7 @@
                 {% endif %}
             </li>
             <li class="nav-item ml-1 ml-lg-2 pl-lg-4 text-center pb-1">
-                <a class="nav-link c4-nav-link" href="#">My History</a>
+                <a class="nav-link c4-nav-link" href="{% url 'c4:history' %}">My History</a>
             </li>
             <li class="nav-item ml-1 ml-lg-2 pl-lg-4 text-center pb-1">
                 <a class="nav-link c4-nav-link" href="{% url 'c4:rules' %}">Rules</a>
@@ -43,7 +43,7 @@
                     <a type='button' class="nav-link c4-nav-link c4-nav-btn" href="{% url 'auth:login' %}">Log In</a>
                 </li>
             {% endif %}
-            
+
         </ul>
     </div>
 

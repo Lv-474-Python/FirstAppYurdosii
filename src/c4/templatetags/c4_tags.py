@@ -48,6 +48,25 @@ def is_game_with_false_accepted_exist(player_1, player_2):
     games = Game.objects.filter(
         player_1=player_1,
         player_2=player_2,
-        is_accepted=False
+        is_accepted=False,
+        end_datetime=None
     )
     return True if games else False
+
+@register.filter
+def get_game_status(game, request_user):
+    #TODO - docstring
+    return game.get_game_status(request_user)
+
+@register.filter
+def get_game_status_class(game, request_user):
+    #TODO - docstring
+    return game.get_game_status(request_user).split()[-1].lower()
+
+@register.filter
+def game_index(all_games, game):
+    #TODO - docstring
+    for index, item in enumerate(all_games):
+        if item == game:
+            return all_games.count() - index
+    return 0

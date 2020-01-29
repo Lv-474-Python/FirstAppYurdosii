@@ -1,3 +1,7 @@
+from datetime import datetime
+
+from django.db import models, IntegrityError
+from django.db.models import Q
 from django.urls import reverse
 from django.shortcuts import render
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -11,7 +15,6 @@ from django.http import (
 
 from utils.constants import C4_ROW_NUMBER, C4_COLUMN_NUMBER
 from .models import Game, Step
-from .forms import GameForm
 
 
 class HomeView(TemplateView):
@@ -44,7 +47,6 @@ class GameDetailView(LoginRequiredMixin, DetailView):
         # sessions об'єкт подивитися
 
         context = self.get_context_data()
-
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
@@ -103,20 +105,21 @@ def whether_my_move(request, *args, **kwargs):
 class UserNewGameListView(LoginRequiredMixin, ListView):
     model = User
     context_object_name = 'users'
-    template_name="c4/new_game.html"
+    template_name = "c4/new_game.html"
     paginate_by = 7
 
     def get_queryset(self):
         query = super().get_queryset()
         result = query.exclude(pk=self.request.user.pk)
         q = self.request.GET.get('q', None)
-        if q: result = result.filter(username__icontains=q)
+        if q:
+            result = result.filter(username__icontains=q)
         # import pdb
         # pdb.set_trace()
         return result
 
     def post(self, request, *args, **kwargs):
-        """Post request for creating new game 
+        """Post request for creating new game
 
         Arguments:
             request {WSGIRequest} -- request
@@ -127,8 +130,57 @@ class UserNewGameListView(LoginRequiredMixin, ListView):
         player_2_username = request.POST['player_2_username']
         player_2 = User.objects.filter(username=player_2_username)[0]
         player_1 = request.user
-        status = None
-        if Game.create(player_1=player_1, player_2=player_2, is_accepted=False):
-            status = True
-        else: status = False
+        status = bool(Game.create(player_1=player_1, player_2=player_2, is_accepted=False))
+        return JsonResponse({'status': status})
+
+
+class GameHistoryListView(LoginRequiredMixin, ListView):
+    model = Game
+    context_object_name = 'games'
+    template_name = "c4/history.html"
+    paginate_by = 4
+
+    def get_queryset(self):
+        query = self.get_queryset_by_user()
+        q = self.request.GET.get('q', None)
+        if q:
+            query = query.search(q, requested_user=self.request.user)
+        return query
+
+    def get_queryset_by_user(self):
+        return super().get_queryset().filter(
+            Q(player_1=self.request.user) |
+            Q(player_2=self.request.user)
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['all_games'] = self.get_queryset_by_user()
+        return context
+
+    def post(self, request, *args, **kwargs):
+        """Post request for accept / decline game
+
+        Arguments:
+            request {WSGIRequest} -- request
+
+        Returns:
+            JsonResponse -- JsonResponse with status (whether post request was successful)
+        """
+        accept = request.POST.get('accept', None)
+        if accept is None:
+            status = False
+        else:
+            game_pk = int(request.POST['game_pk'])
+            game = Game.objects.get(pk=game_pk)
+            accept = bool(int(accept[0]))
+            game.is_accepted = accept
+            game.start_datetime = datetime.now()
+            if not accept:
+                game.end_datetime = datetime.now()
+            try:
+                game.save()
+                status = True
+            except IntegrityError:
+                status = False
         return JsonResponse({'status': status})

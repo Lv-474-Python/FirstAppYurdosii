@@ -1,8 +1,40 @@
 from django.db import models, IntegrityError
+from django.db.models import Q
 from django.urls import reverse
 from django.contrib.auth.models import User
 
 from utils.constants import C4_ROW_NUMBER, C4_COLUMN_NUMBER
+
+
+class GameQuerySet(models.QuerySet):
+    def search(self, query, *args, **kwargs):
+        if query:
+            requested_user = kwargs.get('requested_user', None)
+            if requested_user:
+                ids_list = self.search_by_title(query, requested_user)
+                qs = self.filter(
+                    Q(player_1__username__icontains=query) |
+                    Q(player_2__username__icontains=query) |
+                    Q(pk__in=ids_list)
+                ).distinct()
+                # import pdb
+                # pdb.set_trace()
+                return qs
+            return self
+        return self
+
+    def search_by_title(self, query, requested_user):
+        ids_list = [game.pk for game in self if query.lower() in game.get_game_status(requested_user).lower()]
+        return ids_list
+
+
+class GameManager(models.Manager):
+    def get_queryset(self):
+        return GameQuerySet(self.model, using=self._db)
+
+    def search(self, query, *args, **kwargs):
+        print('Manager')
+        return self.get_queryset().search(query, *args, **kwargs)
 
 
 class Game(models.Model):
@@ -31,6 +63,8 @@ class Game(models.Model):
     end_datetime = models.DateTimeField(null=True)
     is_accepted = models.BooleanField(default=False)
 
+    objects = GameManager()
+
     # Metadata
     class Meta:
         ordering = ['-pk'] # '-end'
@@ -44,7 +78,7 @@ class Game(models.Model):
         Returns:
             string -- the url to access a particular instance of Game
         """
-        return reverse("game_detail", kwargs={"pk": self.pk})
+        return reverse("c4:game", kwargs={"pk": self.pk})
 
     def __str__(self):
         """Return string representing of Game object
@@ -52,7 +86,31 @@ class Game(models.Model):
         Returns:
             string -- representing of Game object
         """
-        return f'Game#{self.pk} - {self.player_1.username} vs {self.player_2.username}. Accepted - {self.is_accepted} '
+        return f'Game#{self.pk} - {self.player_1.username} vs \
+        {self.player_2.username}. Accepted - {self.is_accepted} '
+
+    @property
+    def moves_number(self):
+        return self.steps.count()
+
+    @staticmethod
+    def create(player_1, player_2, is_accepted):
+        """Create new game
+
+        Arguments:
+            player_1 {User} -- player_1
+            player_2 {User} -- player_2
+            is_accepted {bool} -- whether game is accepted by player_2
+
+        Returns:
+            Game -- created Game object
+        """
+        game = Game(player_1=player_1, player_2=player_2, is_accepted=is_accepted)
+        try:
+            game.save()
+            return game
+        except IntegrityError:
+            return None
 
     def get_step_map(self):
         #TODO - enum на значення карти
@@ -86,24 +144,23 @@ class Game(models.Model):
         last_user = Step.object.filter(game=self).user
         return self.player_1 if last_user == self.player_2 else self.player_2
 
-    @staticmethod
-    def create(player_1, player_2, is_accepted):
-        """Create new game
-        
-        Arguments:
-            player_1 {User} -- player_1
-            player_2 {User} -- player_2
-            is_accepted {bool} -- whether game is accepted by player_2
-        
-        Returns:
-            Game -- created Game object
-        """        
-        game = Game(player_1=player_1, player_2=player_2, is_accepted=is_accepted)
-        try:
-            game.save()
-            return game
-        except IntegrityError:
-            return None
+    def get_game_status(self, request_user):
+        if not self.is_accepted and self.end_datetime:
+            if self.player_1 == request_user:
+                return "Rejected"
+            elif self.player_2 == request_user:
+                return "Declined"
+        elif not self.is_accepted and not self.end_datetime:
+            if self.player_1.username == request_user.username:
+                return "Waiting"
+            elif self.player_2.username == request_user.username:
+                return "Accept"
+        elif not self.winner:
+            return "In Progress"
+        elif request_user == self.winner:
+            return "Won"
+        else:
+            return "Lost"
 
 
     # TODO - метод get user games - і типу приймає юзера і вертає ігри суми коли він був як першим гравцем, так і другим

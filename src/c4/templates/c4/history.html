@@ -1,12 +1,13 @@
 {% extends "base.html" %}
 {% load static %}
+{% load c4_tags %}
 
 
 {% block head_title %}My history{% endblock head_title %}
 
 
 {% block head_import %}
-    {% comment %} <script src="{% static 'js/script_c4_new_game.js' %}"></script> {% endcomment %}
+    <script src="{% static 'js/script_c4_history.js' %}"></script>
 {% endblock head_import %}
 
 
@@ -18,8 +19,8 @@
     <div class="col-12 col-lg-10 offset-lg-1 col-xl-8 offset-xl-2">
 
         <!-- New game title -->
-        <div class='new-game-title text-center mt-5'>
-            Players to play with
+        <div class='history-title text-center mt-5'>
+            My games
         </div>
 
         <!-- Search form -->
@@ -27,7 +28,7 @@
             <div class="row">
                 <div class="col-11 col-sm-12">
                     <form method='GET' action="." class="form-inline m-2 my-lg-0">
-                        <input class="form-control new-game-search-input mr-sm-2" type="search" placeholder="Search player" name='q' value="{{request.GET.q}}" aria-label="Search">
+                        <input class="form-control new-game-search-input mr-sm-2" type="search" placeholder="By usernames / statuses" name='q' value="{{request.GET.q}}" aria-label="Search">
                         <button class="btn new-game-search-btn my-2 my-sm-0" type="submit">Search</button>
                         <input type='hidden' name='page' value="{{1}}" />
                     </form>
@@ -36,30 +37,55 @@
         </div>
 
         <!-- Players to play with -->
-        <div class='new-game-users mt-3'>
-            {% for user in users  %}
-                <div class='new-game-user px-4 py-3 mb-2 mx-5'>
+        <div class='history-games mt-3'>
+        {% for game in games %}
+
+            {% with status_class=game|get_game_status_class:request.user %}
+            <div class="{{'px-4 py-3 mb-2 mx-5 history-game history-game-'|change_class:status_class}}">
+            {% endwith %}
                 <div class='row'>
-                    <div class='col-12 col-sm-4 col-lg-8 text-center text-sm-left'>
-                        <div class='new-game-user-title'>
-                            {{user.username}}
+            
+
+                    <!-- General info -->
+                    <div class='col-12 col-sm-4 col-lg-7 text-center text-sm-left'>
+                        <div class='history-game-title'>
+                            <a href="{{game.get_absolute_url}}">Game #{{all_games|game_index:game}}</a>
+                        </div>
+                        <div class='history-game-players'>
+                            <span class='history-game-player'>{{game.player_1.username}}</span> vs <span class='history-game-player'>{{game.player_2.username}}</span>
+                        </div>
+                        <div class='history-game-moves'>
+                            Moves: {{game.moves_number}}
                         </div>
                     </div>
-                    <div class='col-12 col-sm-8 col-lg-4'>
-                        {% if request.user|is_game_with_false_accepted_exist:user%}
-                            <button type="button" 
-                            class="btn py-2 w-100 new-game-user-btn-sent"
-                            user="{{user.username}}" onclick="requestNewGameHandler(this)"
-                            disabled="True">Request sent. Wait</button>
-                        {% else %}
-                        <button type="button" 
-                            class="btn py-2 w-100 new-game-user-btn"
-                            user="{{user.username}}" onclick="requestNewGameHandler(this)">Send request to play</button>
-                        {% endif %}
+
+                    <!-- Status -->
+                    <div class='col-12 col-sm-8 col-lg-5 text-center'>
+                        <div class='history-game-status-title'>
+                            Status
+                        </div>
+                        <div class='history-game-status-title-value mt-2'>
+                            {% if not game.is_accepted and game.player_2 == request.user and not game.end_datetime %}
+                                <button type="button" 
+                                    class="btn py-1 w-50 history-game-status-accept-btn"
+                                    game_pk="{{game.pk}}"
+                                    accept="1"
+                                    onclick="choiceGameHandler(this)">Accept</button>
+                                <button type="button" 
+                                    class="btn py-1 mt-1 w-50 history-game-status-decline-btn"
+                                    game_pk="{{game.pk}}"
+                                    accept="0"
+                                    onclick="choiceGameHandler(this)">Decline</button>
+                            {% else %}
+                                {{game|get_game_status:request.user|title}}
+                            {% endif %}
+                        </div>
                     </div>
+
                 </div>
-                </div>
-            {% endfor %}
+            </div>
+
+        {% endfor %}
         </div>
 
         <!-- Pagination -->
@@ -68,7 +94,7 @@
             <span class="step-links text-center">
                 {% if page_obj.has_previous %}
                     <a class='new-game-page-btn px-2 py-1' type='button' href="?page=1">&laquo; first</a>
-                    <a class='new-game-page-btn px-2 py-1' type='button' href="?page={{ page_obj.previous_page_number }}">&lsaquo; previous</a>
+                    <a class='new-game-page-btn px-2 py-1' type='button' href="?page={{ page_obj.previous_page_number }}">&lsaquo; prev</a>
                 {% else %}
                     <a class='new-game-page-btn-disabled px-2 py-1' type='button'>&laquo; first</a>
                     <a class='new-game-page-btn-disabled px-2 py-1' type='button'>&lsaquo; prev</a>

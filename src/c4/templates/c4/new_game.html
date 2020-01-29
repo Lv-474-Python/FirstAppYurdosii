@@ -69,7 +69,7 @@
             <span class="step-links text-center">
                 {% if page_obj.has_previous %}
                     <a class='new-game-page-btn px-2 py-1' type='button' href="?page=1">&laquo; first</a>
-                    <a class='new-game-page-btn px-2 py-1' type='button' href="?page={{ page_obj.previous_page_number }}">&lsaquo; previous</a>
+                    <a class='new-game-page-btn px-2 py-1' type='button' href="?page={{ page_obj.previous_page_number }}">&lsaquo; prev</a>
                 {% else %}
                     <a class='new-game-page-btn-disabled px-2 py-1' type='button'>&laquo; first</a>
                     <a class='new-game-page-btn-disabled px-2 py-1' type='button'>&lsaquo; prev</a>
@@ -88,24 +88,6 @@
                 {% endif %}
             </span>
         </div>
-
-        {% comment %} <ul class="pagination justify-content-center">
-            <li class="page page-item {% if not blog_post_list.has_previous %} disabled {% endif %}">
-                <a class="page-link" href="?page={{ blog_post_list.number|sub:1 }}">
-                    Prev
-                </a>
-            </li>
-
-            <li class="page-current">
-                (Page {{ blog_post_list.number }} / {{ blog_post_list.paginator.num_pages }})
-            </li> 
-
-            <li class="page page-item {% if not blog_post_list.has_next %} disabled {% endif %}">
-                <a class="page-link" href="?page={{ blog_post_list.number|add:1 }}">
-                    Next
-                </a>
-            </li>
-        </ul> {% endcomment %}
 
     </div>
 </div>
