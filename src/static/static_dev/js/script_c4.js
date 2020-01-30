@@ -5,8 +5,29 @@ $(document).ready(function() {
     current_duration();
     update_page();
 
-    console.log( "ready!" );
+    console.log('Ready')
+    if (document.location.hash == '#just_won') {
+        congratulate();
+        document.location.hash = '';
+    }
 });
+
+function congratulate() {
+    $.toast({ 
+        heading: 'You Won',
+        icon: 'success',
+        text: 'Congratulations. You won. Good job',
+        textAlign : 'center',
+        textColor : '#fff',
+        bgColor : '#0da114',
+        hideAfter : false,
+        stack : false,
+        position : 'mid-center',
+        allowToastClose : true,
+        showHideTransition : 'fade',
+        loader: false,
+    });
+}
 
 
 function ajax_success_handler(data) {
@@ -25,14 +46,18 @@ function ajax_success_handler(data) {
             showHideTransition : 'slide',
             loader: false,
         })
+    }
+    else if (data['just_won']) {
+        document.location.hash = 'just_won'
+        document.location.reload();
     } else {
         // швидкість менша при doc
-        // document.location.reload()
-        console.log(data);
-        document.open();
-        document.write(data);
-        document.close();
-        console.log('yep'); 
+        document.location.reload()
+        // console.log(data);
+        // document.open();
+        // document.write(data);
+        // document.close();
+        // console.log('yep'); 
     }
 }
 
@@ -68,7 +93,11 @@ function current_duration() {
     // TODO - щоб дні виводило
     let game_duration = document.getElementsByClassName("game-duration-time")[0];
     let game_time = new Date(game_duration.innerText);
-    console.log(game_time);
+
+    let game_ended = document.getElementsByClassName("game-detail-map-ended");
+    if (game_ended.length) {
+        return;
+    }
 
     setInterval(() => {
         let today = new Date();
@@ -101,10 +130,10 @@ function update_page() {
             url: url,
             type: 'GET',
             success: (data) => {
-                console.log(id);
-                console.log(is_my_turn);
-                console.log(data);
-                console.log();
+                // console.log(id);
+                // console.log(is_my_turn);
+                // console.log(data);
+                // console.log();
                 id += 1;
 
                 if (is_my_turn != data['my_move']) {

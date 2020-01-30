@@ -70,3 +70,17 @@ def game_index(all_games, game):
         if item == game:
             return all_games.count() - index
     return 0
+
+@register.filter
+def get_ended_game_class(game):
+    #TODO - docstring
+    if game.winner:
+        return " game-detail-map-ended"
+    return ''
+
+@register.filter
+def get_player_ended_game_class(game, player):
+    #TODO - docstring
+    if game.winner == player:
+        return " player-3"
+    return ''

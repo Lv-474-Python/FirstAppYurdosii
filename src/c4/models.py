@@ -1,9 +1,12 @@
+from datetime import datetime, timedelta
+
 from django.db import models, IntegrityError
 from django.db.models import Q
 from django.urls import reverse
 from django.contrib.auth.models import User
 
 from utils.constants import C4_ROW_NUMBER, C4_COLUMN_NUMBER
+from .algorithm import check_map
 
 
 class GameQuerySet(models.QuerySet):
@@ -86,8 +89,7 @@ class Game(models.Model):
         Returns:
             string -- representing of Game object
         """
-        return f'Game#{self.pk} - {self.player_1.username} vs \
-        {self.player_2.username}. Accepted - {self.is_accepted} '
+        return f'Game#{self.pk} - {self.player_1.username} vs {self.player_2.username}. Accepted - {self.is_accepted} '
 
     @property
     def moves_number(self):
@@ -125,17 +127,21 @@ class Game(models.Model):
         Returns:
             list -- matrix of steps (map)
         """
-        # Enum for values
         steps = Step.objects.filter(game=self)
         map_n = C4_ROW_NUMBER
         map_m = C4_COLUMN_NUMBER
         step_map = [[0 for _ in range(map_m)] for _ in range(map_n)]
         for step in steps:
             step_map[step.y-1][step.x-1] = 1 if step.user == self.player_1 else 2
-        return step_map
+        is_won, map = check_map(step_map)
+        if is_won and not self.end_datetime:
+            self.end_datetime = datetime.now() + timedelta(hours=2)
+            self.winner = steps.last().user
+            self.save()
+        return map
 
     def get_turn_user(self):
-        #TODO
+        #TODO - docstring
         """[summary]
 
         Returns:
@@ -145,6 +151,7 @@ class Game(models.Model):
         return self.player_1 if last_user == self.player_2 else self.player_2
 
     def get_game_status(self, request_user):
+        #TODO - docstring
         if not self.is_accepted and self.end_datetime:
             if self.player_1 == request_user:
                 return "Rejected"
@@ -161,9 +168,10 @@ class Game(models.Model):
             return "Won"
         else:
             return "Lost"
-
-
-    # TODO - метод get user games - і типу приймає юзера і вертає ігри суми коли він був як першим гравцем, так і другим
+    
+    def get_game_steps(self):
+        #TODO - docstring
+        return Step.objects.filter(game=self)
 
 
 class Step(models.Model):
@@ -237,10 +245,12 @@ class Step(models.Model):
                 bool - whether move may be made
                 string - errors
         """
-        qs = Step.objects.filter(game=game)
-
-        if qs.last().user == request_user:
+        qs = game.get_game_steps()
+        if not qs:
+            if request_user != game.player_1:
+                return (False, "It isn't your turn to move")
+        elif qs.last().user == request_user:
             return (False, "It isn't your turn to move")
-        if qs.filter(x=step_x, y=1):
+        elif qs.filter(x=step_x, y=1):
             return (False, "This column is full already")
         return (True, "")

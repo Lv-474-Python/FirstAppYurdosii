@@ -134,3 +134,4 @@ venvc4/
 #.idea/
 node_modules/
 package-lock.json
+test_algorithm.py

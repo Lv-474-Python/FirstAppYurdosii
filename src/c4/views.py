@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.db import models, IntegrityError
 from django.db.models import Q
@@ -61,7 +61,14 @@ class GameDetailView(LoginRequiredMixin, DetailView):
 
         Step.create(self.object, request.user, step_x, step_y)
 
+        winner_before = self.object.winner
         context = self.get_context_data()
+        winner_after = self.object.winner
+        if winner_before != winner_after:
+            return JsonResponse({'just_won': True})
+        
+        # якщо челік програм то йому вивести що він лох, програв
+
         return render(request, self.template_name, context)
 
     def get_turn_username(self, request_user):
@@ -75,11 +82,23 @@ class GameDetailView(LoginRequiredMixin, DetailView):
                 'Your' - if requested_user equals to user that has to move,
                 current turn user username - otherwise
         """
-        last_turn_user = Step.objects.all().last().user
         p_1 = self.object.player_1
         p_2 = self.object.player_2
-        turn_user = p_2 if last_turn_user == p_1 else p_1
+
+        steps = self.object.get_game_steps()
+        if not steps:
+            print(request_user)
+            if request_user == p_1: return "Your"
+            else: return p_1.username
+
+        turn_user = p_2 if steps.last().user == p_1 else p_1
         return 'Your' if turn_user == request_user else turn_user.username
+    
+    def set_context_win(self, context):
+        game = self.object
+        context['player_1_endgame'] = ' player-3' if game.player_1 == game.winner else ''
+        context['player_2_endgame'] = ' player-3' if game.player_2 == game.winner else ''
+        return context
 
 
 def whether_my_move(request, *args, **kwargs):
@@ -95,8 +114,12 @@ def whether_my_move(request, *args, **kwargs):
     game_pk = kwargs['pk']
     try:
         game = Game.objects.get(pk=game_pk)
-        last_user = Step.objects.filter(game=game).last().user
-        my_move = request.user != last_user
+        steps = game.get_game_steps()
+        if not steps:
+            my_move = request.user == game.player_1
+        else:
+            last_user = steps.last().user
+            my_move = request.user != last_user
         return JsonResponse({'my_move': my_move})
     except User.DoesNotExist:
         return HttpResponseNotFound('<h1>Not Found</h1>')
@@ -175,9 +198,9 @@ class GameHistoryListView(LoginRequiredMixin, ListView):
             game = Game.objects.get(pk=game_pk)
             accept = bool(int(accept[0]))
             game.is_accepted = accept
-            game.start_datetime = datetime.now()
+            game.start_datetime = datetime.now() + timedelta(hours=2)
             if not accept:
-                game.end_datetime = datetime.now()
+                game.end_datetime = datetime.now() + timedelta(hours=2)
             try:
                 game.save()
                 status = True

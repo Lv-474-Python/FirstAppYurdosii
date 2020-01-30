@@ -20,10 +20,18 @@
         <div class="game-detail-title text-center mt-3">
             Game #{{game.pk}}: {{game.player_1.username}} vs {{game.player_2.username}}
         </div>
-        
+         
         <!-- Game detail player's move -->
         <div class="game-detail-move text-center mt-2">
-            {{turn_username}} turn
+            {% if game.winner %}
+                {% if game.winner == request.user %}
+                    You won
+                {% else %}
+                    You lost
+                {% endif %}
+            {% else %}
+                {{turn_username}} turn
+            {% endif %}
         </div>
 
         {% comment %} {{ yura }}
@@ -32,17 +40,12 @@
         
 
         <!-- Game map -->
-        <div class="game-detail-map text-center mt-4 pt-2">
+        {% with ended_game_class=game|get_ended_game_class %}
+            <div class="{{'game-detail-map text-center mt-4 pt-2'|change_class:ended_game_class}}">
+        {% endwith %}
             <div class="table-responsive">
             <table class="table table-c4">
 
-            {% comment %} {% if map.i.j == "0" %}
-                                    class="map-item py-4" 
-                                {% elif map.i.j == 1 %}
-                                    class="map-item py-4 player-1" 
-                                {% else %}
-                                    class="map-item py-4 player-2" 
-                                {% endif %} {% endcomment %}
             <tbody>
                 {% for i in rows %}
                     <tr>
@@ -82,7 +85,9 @@
                         <tbody> 
                         <tr>
                             <td class='map-cell'>
-                                <div class="map-item-player1 py-4 mx-2">
+                            {% with player_1_endgame_class=game|get_player_ended_game_class:game.player_1 %}
+                                <div class="{{'map-item-player1 py-4 mx-2'|change_class:player_1_endgame_class}}">
+                            {% endwith %}
                                     <p></p>
                                 </div>
                             </td>
@@ -98,8 +103,15 @@
                         Duration
                     </div>
                     <div class="game-duration-time pt-3">
-                        {{game.start_datetime|date:"F d, Y"}}
-                        {{game.start_datetime|time:"H:i:s"}}
+                        {% if game.winner %}
+                            From {{game.start_datetime|date:"M j"}},
+                            {{game.start_datetime|time:"H:i"}} 
+                            </br> to {{game.end_datetime|date:"M j"}},
+                            {{game.end_datetime|time:"H:i"}} 
+                        {% else %}
+                            {{game.start_datetime|date:"F d, Y"}}
+                            {{game.start_datetime|time:"H:i:s"}}
+                        {% endif %}
                     </div>
                 </div>
 
@@ -113,7 +125,9 @@
                         <tbody> 
                         <tr>
                             <td class='map-cell'>
-                                <div class="map-item-player2 py-4 mx-2">
+                            {% with player_2_endgame_class=game|get_player_ended_game_class:game.player_2 %}
+                                <div class="{{'map-item-player2 py-4 mx-2'|change_class:player_2_endgame_class}}">
+                            {% endwith %}
                                     <p></p>
                                 </div>
                             </td>
