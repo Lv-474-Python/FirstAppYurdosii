@@ -10,7 +10,7 @@ from .algorithm import check_map
 
 
 class GameQuerySet(models.QuerySet):
-    def search(self, query, *args, **kwargs):
+    def search(self, query, **kwargs):
         if query:
             requested_user = kwargs.get('requested_user', None)
             if requested_user:
@@ -26,8 +26,8 @@ class GameQuerySet(models.QuerySet):
             return self
         return self
 
-    def search_by_title(self, query, requested_user):
-        ids_list = [game.pk for game in self if query.lower() in game.get_game_status(requested_user).lower()]
+    def search_by_title(self, query, user):
+        ids_list = [game.pk for game in self if query.lower() in game.get_game_status(user).lower()]
         return ids_list
 
 
@@ -114,7 +114,7 @@ class Game(models.Model):
         except IntegrityError:
             return None
 
-    def get_step_map(self):
+    def get_game_map(self):
         #TODO - enum на значення карти
         """Return map of steps of the current game.
 
@@ -133,44 +133,51 @@ class Game(models.Model):
         step_map = [[0 for _ in range(map_m)] for _ in range(map_n)]
         for step in steps:
             step_map[step.y-1][step.x-1] = 1 if step.user == self.player_1 else 2
-        is_won, map = check_map(step_map)
+        is_won, game_map = check_map(step_map)
         if is_won and not self.end_datetime:
             self.end_datetime = datetime.now() + timedelta(hours=2)
             self.winner = steps.last().user
             self.save()
-        return map
+        return game_map
 
     def get_turn_user(self):
-        #TODO - docstring
-        """[summary]
+        """Return user that has to move next
 
         Returns:
-            [type] -- [description]
+            User -- user that has to move next
         """
         last_user = Step.object.filter(game=self).user
         return self.player_1 if last_user == self.player_2 else self.player_2
 
     def get_game_status(self, request_user):
-        #TODO - docstring
+        """Return game status for user
+
+        Arguments:
+            request_user {User} -- user that requested game_status
+
+        Returns:
+            str -- game status
+        """
         if not self.is_accepted and self.end_datetime:
             if self.player_1 == request_user:
                 return "Rejected"
-            elif self.player_2 == request_user:
-                return "Declined"
+            return "Declined"  #elif self.player_2 == request_user:
         elif not self.is_accepted and not self.end_datetime:
             if self.player_1.username == request_user.username:
                 return "Waiting"
-            elif self.player_2.username == request_user.username:
-                return "Accept"
+            return "Accept"  #self.player_2.username == request_user.username:
         elif not self.winner:
             return "In Progress"
         elif request_user == self.winner:
             return "Won"
-        else:
-            return "Lost"
-    
+        return "Lost"
+
     def get_game_steps(self):
-        #TODO - docstring
+        """Get steps of particular gam
+
+        Returns:
+            QuerySet -- game's steps
+        """
         return Step.objects.filter(game=self)
 
 
@@ -231,14 +238,13 @@ class Step(models.Model):
             return None
 
     @staticmethod
-    def check_step(game, request_user, step_x, step_y):
+    def check_step(game, request_user, step_x):
         """Check whether step may be made
 
         Arguments:
             game {Game} --
             request_user {django.contrib.auth.models.User} -- user that requested to make a move
             step_x {int} -- step's x
-            step_y {int} -- step's y
 
         Returns:
             tuple(bool, string) --

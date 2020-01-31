@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-from django.db import models, IntegrityError
+from django.db import IntegrityError
 from django.db.models import Q
 from django.urls import reverse
 from django.shortcuts import render
@@ -34,7 +34,7 @@ class GameDetailView(LoginRequiredMixin, DetailView):
         context = super().get_context_data(**kwargs)
         context['rows'] = range(C4_ROW_NUMBER)
         context['columns'] = range(C4_COLUMN_NUMBER)
-        context['map'] = self.object.get_step_map()
+        context['map'] = self.object.get_game_map()
         context['turn_username'] = self.get_turn_username(self.request.user)
         return context
 
@@ -55,7 +55,7 @@ class GameDetailView(LoginRequiredMixin, DetailView):
         data = request.POST
         step_x = int(data["x"][0])
         step_y = int(data["y"][0])
-        is_correct, errors = Step.check_step(self.object, request.user, step_x, step_y)
+        is_correct, errors = Step.check_step(self.object, request.user, step_x)
         if not is_correct:
             return JsonResponse({'errors': errors})
 
@@ -66,7 +66,7 @@ class GameDetailView(LoginRequiredMixin, DetailView):
         winner_after = self.object.winner
         if winner_before != winner_after:
             return JsonResponse({'just_won': True})
-        
+
         # якщо челік програм то йому вивести що він лох, програв
 
         return render(request, self.template_name, context)
@@ -87,13 +87,13 @@ class GameDetailView(LoginRequiredMixin, DetailView):
 
         steps = self.object.get_game_steps()
         if not steps:
-            print(request_user)
-            if request_user == p_1: return "Your"
-            else: return p_1.username
+            if request_user == p_1:
+                return "Your"
+            return p_1.username
 
         turn_user = p_2 if steps.last().user == p_1 else p_1
         return 'Your' if turn_user == request_user else turn_user.username
-    
+
     def set_context_win(self, context):
         game = self.object
         context['player_1_endgame'] = ' player-3' if game.player_1 == game.winner else ''
