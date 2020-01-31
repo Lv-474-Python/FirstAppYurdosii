@@ -132,11 +132,11 @@ class UserNewGameListView(LoginRequiredMixin, ListView):
     paginate_by = 7
 
     def get_queryset(self):
-        query = super().get_queryset()
-        result = query.exclude(pk=self.request.user.pk)
-        q = self.request.GET.get('q', None)
-        if q:
-            result = result.filter(username__icontains=q)
+        qs = super().get_queryset()
+        result = qs.exclude(pk=self.request.user.pk)
+        query = self.request.GET.get('q', None)
+        if query:
+            result = result.filter(username__icontains=query)
         # import pdb
         # pdb.set_trace()
         return result
@@ -164,11 +164,11 @@ class GameHistoryListView(LoginRequiredMixin, ListView):
     paginate_by = 4
 
     def get_queryset(self):
-        query = self.get_queryset_by_user()
-        q = self.request.GET.get('q', None)
-        if q:
-            query = query.search(q, requested_user=self.request.user)
-        return query
+        qs = self.get_queryset_by_user()
+        query = self.request.GET.get('q', None)
+        if query:
+            qs = qs.search(query, requested_user=self.request.user)
+        return qs
 
     def get_queryset_by_user(self):
         return super().get_queryset().filter(
@@ -176,7 +176,7 @@ class GameHistoryListView(LoginRequiredMixin, ListView):
             Q(player_2=self.request.user)
         )
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         context['all_games'] = self.get_queryset_by_user()
         return context

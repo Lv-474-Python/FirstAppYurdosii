@@ -116,6 +116,13 @@ function datetime_with_leading_zeros(dt) {
 
 function update_page() {
     const url = document.location.href + 'my_move/';
+
+    // if game is ended
+    let game_ended = document.getElementsByClassName("game-detail-map-ended");
+    if (game_ended.length) {
+        return;
+    }
+
     $.ajax({
         url: url,
         type: 'GET',

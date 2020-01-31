@@ -89,7 +89,8 @@ class Game(models.Model):
         Returns:
             string -- representing of Game object
         """
-        return f'Game#{self.pk} - {self.player_1.username} vs {self.player_2.username}. Accepted - {self.is_accepted} '
+        return f'Game#{self.pk} - {self.player_1.username} vs ' + \
+        f'{self.player_2.username}. Accepted - {self.is_accepted}'
 
     @property
     def moves_number(self):
@@ -158,19 +159,16 @@ class Game(models.Model):
         Returns:
             str -- game status
         """
+        status = "Lost"
         if not self.is_accepted and self.end_datetime:
-            if self.player_1 == request_user:
-                return "Rejected"
-            return "Declined"  #elif self.player_2 == request_user:
+            status = "Rejected" if self.player_1 == request_user else "Declined"
         elif not self.is_accepted and not self.end_datetime:
-            if self.player_1.username == request_user.username:
-                return "Waiting"
-            return "Accept"  #self.player_2.username == request_user.username:
+            status = "Waiting" if self.player_1.username == request_user.username else "Accept"
         elif not self.winner:
-            return "In Progress"
+            status = "In Progress"
         elif request_user == self.winner:
-            return "Won"
-        return "Lost"
+            status = "Won"
+        return status
 
     def get_game_steps(self):
         """Get steps of particular gam
