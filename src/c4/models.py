@@ -5,7 +5,9 @@ from django.db.models import Q
 from django.urls import reverse
 from django.contrib.auth.models import User
 
-from utils.constants import C4_ROW_NUMBER, C4_COLUMN_NUMBER
+from utils.constants import (
+    C4_ROW_NUMBER, C4_COLUMN_NUMBER, MAX_MOVES_NUMBER
+)
 from .algorithm import check_map
 
 
@@ -128,7 +130,7 @@ class Game(models.Model):
         Returns:
             list -- matrix of steps (map)
         """
-        steps = Step.objects.filter(game=self)
+        steps = self.get_game_steps()
         map_n = C4_ROW_NUMBER
         map_m = C4_COLUMN_NUMBER
         step_map = [[0 for _ in range(map_m)] for _ in range(map_n)]
@@ -138,6 +140,9 @@ class Game(models.Model):
         if is_won and not self.end_datetime:
             self.end_datetime = datetime.now() + timedelta(hours=2)
             self.winner = steps.last().user
+            self.save()
+        elif steps.count() == MAX_MOVES_NUMBER:
+            self.end_datetime = datetime.now() + timedelta(hours=2)
             self.save()
         return game_map
 
@@ -165,7 +170,7 @@ class Game(models.Model):
         elif not self.is_accepted and not self.end_datetime:
             status = "Waiting" if self.player_1.username == request_user.username else "Accept"
         elif not self.winner:
-            status = "In Progress"
+            status = "Draw" if self.moves_number == MAX_MOVES_NUMBER else "In Progress"
         elif request_user == self.winner:
             status = "Won"
         return status

@@ -99,7 +99,7 @@ body {
     opacity: 0.8;
     /* font-weight: 300; */
 }
-.game-detail-map-ended {
+.game-detail-map-disabled {
     pointer-events: none;
 }
 
@@ -257,6 +257,9 @@ body {
 }
 .history-game-lost {
     background-color: #ff1616;
+}
+.history-game-draw {
+    background-color: #ffba18;
 }
 .history-game-progress {
     background-color: #eaea44;

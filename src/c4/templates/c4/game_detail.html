@@ -20,7 +20,7 @@
         <div class="game-detail-title text-center mt-3">
             Game #{{game.pk}}: {{game.player_1.username}} vs {{game.player_2.username}}
         </div>
-         
+
         <!-- Game detail player's move -->
         <div class="game-detail-move text-center mt-2">
             {% if game.winner %}
@@ -29,18 +29,19 @@
                 {% else %}
                     You lost
                 {% endif %}
-            {% else %}
+            {% elif game.moves_number == MAX_MOVES_NUMBER %}
+                Draw
+            {% elif game.end_datetime%}
+                Game wasn't accepted
+            {% elif not game.is_accepted %}
+                Waiting to accept
+            {% else %}  
                 {{turn_username}} turn
             {% endif %}
         </div>
 
-        {% comment %} {{ yura }}
-        {{ map.5.3 }}
-        {{ map }} {% endcomment %}
-        
-
         <!-- Game map -->
-        {% with ended_game_class=game|get_ended_game_class %}
+        {% with ended_game_class=game|get_disabled_game_class %}
             <div class="{{'game-detail-map text-center mt-4 pt-2'|change_class:ended_game_class}}">
         {% endwith %}
             <div class="table-responsive">
@@ -70,7 +71,7 @@
             </table>
             </div>
         </div>
-    
+
         <!-- Game map info-->
         <div class="game-detail-map-info mt-1">
             <div class="row">
@@ -103,11 +104,13 @@
                         Duration
                     </div>
                     <div class="game-duration-time pt-3">
-                        {% if game.winner %}
+                        {% if game.end_datetime %}
                             From {{game.start_datetime|date:"M j"}},
                             {{game.start_datetime|time:"H:i"}} 
                             </br> to {{game.end_datetime|date:"M j"}},
                             {{game.end_datetime|time:"H:i"}} 
+                        {% elif not game.is_accepted %}
+                            Not yet started
                         {% else %}
                             {{game.start_datetime|date:"F d, Y"}}
                             {{game.start_datetime|time:"H:i:s"}}

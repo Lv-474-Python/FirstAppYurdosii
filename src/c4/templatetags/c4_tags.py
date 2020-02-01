@@ -96,17 +96,17 @@ def game_index(all_games, game):
     return 0
 
 @register.filter
-def get_ended_game_class(game):
-    """Return end game class if game ended
+def get_disabled_game_class(game):
+    """Return game class if game ended or not yet started
 
     Arguments:
         game {Game} -- Game instance
 
     Returns:
-        str -- ended game class
+        str -- disable game class
     """
-    if game.winner:
-        return " game-detail-map-ended"
+    if game.end_datetime or not game.is_accepted:
+        return " game-detail-map-disabled"
     return ''
 
 @register.filter

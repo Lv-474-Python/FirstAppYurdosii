@@ -13,7 +13,9 @@ from django.http import (
     JsonResponse, HttpResponseNotFound, HttpResponseRedirect
 )
 
-from utils.constants import C4_ROW_NUMBER, C4_COLUMN_NUMBER
+from utils.constants import (
+    C4_ROW_NUMBER, C4_COLUMN_NUMBER, MAX_MOVES_NUMBER
+)
 from .models import Game, Step
 
 
@@ -36,6 +38,7 @@ class GameDetailView(LoginRequiredMixin, DetailView):
         context['columns'] = range(C4_COLUMN_NUMBER)
         context['map'] = self.object.get_game_map()
         context['turn_username'] = self.get_turn_username(self.request.user)
+        context['MAX_MOVES_NUMBER'] = MAX_MOVES_NUMBER
         return context
 
     def get(self, request, *args, **kwargs):
@@ -61,13 +64,14 @@ class GameDetailView(LoginRequiredMixin, DetailView):
 
         Step.create(self.object, request.user, step_x, step_y)
 
-        winner_before = self.object.winner
+        # check if game has just ended
+        end_datetime_before = self.object.end_datetime
         context = self.get_context_data()
-        winner_after = self.object.winner
-        if winner_before != winner_after:
-            return JsonResponse({'just_won': True})
-
-        # якщо челік програм то йому вивести що він лох, програв
+        end_datetime_after = self.object.end_datetime
+        if end_datetime_before != end_datetime_after:
+            if request.user == self.object.winner:
+                return JsonResponse({'just_won': True})
+            return JsonResponse({'draw': True})
 
         return render(request, self.template_name, context)
 

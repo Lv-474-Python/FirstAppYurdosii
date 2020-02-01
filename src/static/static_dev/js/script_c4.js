@@ -7,12 +7,15 @@ $(document).ready(function() {
 
     console.log('Ready')
     if (document.location.hash == '#just_won') {
-        congratulate();
+        congratulate_win();
+        document.location.hash = '';
+    } else if (document.location.hash == '#draw') {
+        congratulate_draw();
         document.location.hash = '';
     }
 });
 
-function congratulate() {
+function congratulate_win() {
     $.toast({ 
         heading: 'You Won',
         icon: 'success',
@@ -20,6 +23,23 @@ function congratulate() {
         textAlign : 'center',
         textColor : '#fff',
         bgColor : '#0da114',
+        hideAfter : false,
+        stack : false,
+        position : 'mid-center',
+        allowToastClose : true,
+        showHideTransition : 'fade',
+        loader: false,
+    });
+}
+
+function congratulate_draw() {
+    $.toast({ 
+        heading: "It's a DRAW",
+        icon: 'info',
+        text: "Thank you for this tough game. It was fun to watch",
+        textAlign : 'center',
+        textColor : '#fff',
+        bgColor : '#b78101x',
         hideAfter : false,
         stack : false,
         position : 'mid-center',
@@ -46,18 +66,20 @@ function ajax_success_handler(data) {
             showHideTransition : 'slide',
             loader: false,
         })
-    }
-    else if (data['just_won']) {
+    } else if (data['just_won']) {
         document.location.hash = 'just_won'
+        document.location.reload();
+    } else if (data['draw']) {
+        document.location.hash = 'draw'
         document.location.reload();
     } else {
         // швидкість менша при doc
-        document.location.reload()
-        // console.log(data);
-        // document.open();
-        // document.write(data);
-        // document.close();
-        // console.log('yep'); 
+        // document.location.reload()
+        console.log(data);
+        document.open();
+        document.write(data);
+        document.close();
+        console.log('yep'); 
     }
 }
 
@@ -94,7 +116,7 @@ function current_duration() {
     let game_duration = document.getElementsByClassName("game-duration-time")[0];
     let game_time = new Date(game_duration.innerText);
 
-    let game_ended = document.getElementsByClassName("game-detail-map-ended");
+    let game_ended = document.getElementsByClassName("game-detail-map-disabled");
     if (game_ended.length) {
         return;
     }
@@ -118,7 +140,7 @@ function update_page() {
     const url = document.location.href + 'my_move/';
 
     // if game is ended
-    let game_ended = document.getElementsByClassName("game-detail-map-ended");
+    let game_ended = document.getElementsByClassName("game-detail-map-disabled");
     if (game_ended.length) {
         return;
     }
@@ -131,7 +153,7 @@ function update_page() {
         }),
     });
 
-    let id = 1;
+    // let id = 1;
     setInterval(() => {
         $.ajax({
             url: url,
@@ -141,11 +163,11 @@ function update_page() {
                 // console.log(is_my_turn);
                 // console.log(data);
                 // console.log();
-                id += 1;
+                // id += 1;
 
                 if (is_my_turn != data['my_move']) {
                     if (data['my_move'] = true) {
-                        console.log('RELOAD');
+                        // console.log('RELOAD');
                         document.location.reload();
                     }
                     is_my_turn = data['my_move'];
