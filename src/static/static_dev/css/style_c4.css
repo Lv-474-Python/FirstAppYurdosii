@@ -103,6 +103,21 @@ body {
     pointer-events: none;
 }
 
+.game-detail-replay-btn {
+    border: 1px solid red;
+    border-radius: 0;
+    color: #fff;
+    background-color: red;
+}
+.game-detail-replay-btn:hover {
+    transition: 0.3s;
+    color: red;
+    background-color: #fff;
+}
+.game-detail-replay-btn:focus {
+    box-shadow: none;
+}
+
 .table-c4 td{
     border: 1.8px solid #42464A;
 }

@@ -42,21 +42,25 @@ function choiceGameHandler(btn) {
             if (data['status']) {
                 document.location.reload();
             } else {
-                $.toast({ 
-                    heading: 'Error',
-                    icon: 'error',
-                    text: 'Something went wrong. Please reload page and try again.',
-                    textAlign : 'left',
-                    textColor : '#fff',
-                    bgColor : '#d90400',
-                    hideAfter : 2000,
-                    stack : 3,
-                    position : 'bottom-right',
-                    allowToastClose : true,
-                    showHideTransition : 'slide',
-                    loader: false,
-                })
+                somethingWentWrong();
             }
         },
     });
+}
+
+function somethingWentWrong() {
+    $.toast({ 
+        heading: 'Error',
+        icon: 'error',
+        text: 'Something went wrong. Please reload page and try again.',
+        textAlign : 'left',
+        textColor : '#fff',
+        bgColor : '#d90400',
+        hideAfter : 2000,
+        stack : 3,
+        position : 'bottom-right',
+        allowToastClose : true,
+        showHideTransition : 'slide',
+        loader: false,
+    })
 }

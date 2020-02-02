@@ -76,6 +76,29 @@ class GameDetailView(LoginRequiredMixin, DetailView):
 
         return render(request, self.template_name, context)
 
+    # def head(self, request, *args, **kwargs):
+    #     """Return whether requested user should move
+
+    #     Arguments:
+    #         request {WSGIRequest} -- request
+
+    #     Returns:
+    #         dict (JsonResponse) --
+    #             my_move (bool) - whether requested user should move
+    #     """
+    #     # import pdb
+    #     # pdb.set_trace()
+    #     game = self.get_object()
+    #     steps = game.get_game_steps()
+    #     if not steps:
+    #         my_move = request.user == game.player_1
+    #     else:
+    #         last_user = steps.last().user
+    #         my_move = request.user != last_user
+    #     print(f'{my_move=}')
+    #     return HttpResponse({'my_move': my_move})
+
+
     def get_turn_username(self, request_user):
         """Get current turn user username
 
@@ -126,7 +149,23 @@ def whether_my_move(request, *args, **kwargs):
             last_user = steps.last().user
             my_move = request.user != last_user
         return JsonResponse({'my_move': my_move})
-    except User.DoesNotExist:
+    except Game.DoesNotExist:
+        return HttpResponseNotFound('<h1>Not Found</h1>')
+
+def game_steps(request, *args, **kwargs):
+    game_pk = kwargs['pk']
+    try:
+        game = Game.objects.get(pk=game_pk)
+        steps = game.get_game_steps()
+        steps = list(steps.values('x', 'y', 'user'))
+        data = {}
+        data['steps'] = steps
+        data['player_1_pk'] = game.player_1.pk
+        data['player_2_pk'] = game.player_2.pk
+        data['status'] = True
+
+        return JsonResponse(data)
+    except Game.DoesNotExist:
         return HttpResponseNotFound('<h1>Not Found</h1>')
 
 

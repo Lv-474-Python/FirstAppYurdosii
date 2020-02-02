@@ -15,6 +15,7 @@ $(document).ready(function() {
     }
 });
 
+// When step finished game in win for request user
 function congratulate_win() {
     $.toast({ 
         heading: 'You Won',
@@ -32,6 +33,7 @@ function congratulate_win() {
     });
 }
 
+// When step finished game in draw
 function congratulate_draw() {
     $.toast({ 
         heading: "It's a DRAW",
@@ -49,6 +51,23 @@ function congratulate_draw() {
     });
 }
 
+
+function cellHandler(cell) {
+    let data = {};
+    data.x = parseInt(cell.attributes["x"].nodeValue);
+    data.y = parseInt(cell.attributes["y"].nodeValue);
+    data["csrfmiddlewaretoken"] = document.getElementsByName("csrfmiddlewaretoken")[0].value;
+    const url = document.location.href;
+    // console.log(data)
+    // console.log(url)
+
+    $.ajax({
+        url: url,
+        type: 'POST',
+        data: data,
+        success: ajax_success_handler,
+    });
+}
 
 function ajax_success_handler(data) {
     if (data['errors']) {
@@ -83,24 +102,8 @@ function ajax_success_handler(data) {
     }
 }
 
-function cellHandler(cell) {
-    let data = {};
-    data.x = parseInt(cell.attributes["x"].nodeValue);
-    data.y = parseInt(cell.attributes["y"].nodeValue);
-    data["csrfmiddlewaretoken"] = document.getElementsByName("csrfmiddlewaretoken")[0].value;
-    const url = document.location.href;
-    console.log(data)
-    console.log(url)
 
-    $.ajax({
-        url: url,
-        type: 'POST',
-        data: data,
-        success: ajax_success_handler,
-    });
-}
-
-
+// Blink current turn user
 function current_turn_blink() {
     let current_turn_class = document.getElementsByClassName("game-detail-move")[0];
     let current_opacity = 0
@@ -111,6 +114,7 @@ function current_turn_blink() {
 }
 
 
+// Duration functionality
 function current_duration() {
     // TODO - щоб дні виводило
     let game_duration = document.getElementsByClassName("game-duration-time")[0];
@@ -136,8 +140,10 @@ function datetime_with_leading_zeros(dt) {
 }
 
 
+// Check to reload page
 function update_page() {
-    const url = document.location.href + 'my_move/';
+    let url_obj = new URL(document.location.href);
+    const url = url_obj['origin'] + url_obj['pathname'] + 'my_move/';
 
     // if game is ended
     let game_ended = document.getElementsByClassName("game-detail-map-disabled");
@@ -160,6 +166,7 @@ function update_page() {
             type: 'GET',
             success: (data) => {
                 // console.log(id);
+                // console.log(url);
                 // console.log(is_my_turn);
                 // console.log(data);
                 // console.log();
@@ -175,4 +182,77 @@ function update_page() {
             },
         });
     }, 5000);
+}
+
+
+// Replay functionality
+function replayGameHandler(btn) {
+    console.log("Replay");
+    data = {}
+    data['game_pk'] = +btn.attributes['game_pk'].nodeValue;
+
+    let url_obj = new URL(document.location.href);
+    const url = url_obj['origin'] + url_obj['pathname']  + 'steps/';
+    console.log(url);
+    $.ajax({
+        url: url,
+        type: 'GET',
+        data: data,
+        success: (data) => {
+            if (data['status']) {
+                console.log(data);
+                replayGame(data)
+            } else {
+                somethingWentWrong();
+            }
+        },
+    });
+}
+
+function replayGame(data) {
+    let steps = data['steps'];
+    clearMap(steps);
+    replaySteps(steps, data['player_1_pk'], data['player_2_pk']);
+}
+
+function replaySteps(steps, p1, p2) {
+    for(let i = 0; i < steps.length; ++i) {
+        setTimeout(() => {
+            let step = steps[i];
+            let name = String(step['y']) + String(step['x']);
+            let cell = document.getElementsByName(name)[0];
+            let player = step['user'] == p1 ? 1 : 2;
+
+            cell.className += String(player);
+            if (i == steps.length - 1) {
+                document.location.reload();
+            }
+        }, i * 600);
+    }
+}
+
+function clearMap(steps) {
+    for (let i = 0; i < steps.length; ++i) {
+        let step = steps[i];
+        let name = String(step['y']) + String(step['x']);
+        let cell = document.getElementsByName(name)[0];
+        cell.className = cell.className.slice(0, cell.className.length - 1);
+    }
+}
+
+function somethingWentWrong() {
+    $.toast({ 
+        heading: 'Error',
+        icon: 'error',
+        text: 'Something went wrong. Please reload page and try again.',
+        textAlign : 'left',
+        textColor : '#fff',
+        bgColor : '#d90400',
+        hideAfter : 2000,
+        stack : 3,
+        position : 'bottom-right',
+        allowToastClose : true,
+        showHideTransition : 'slide',
+        loader: false,
+    });
 }

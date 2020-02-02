@@ -40,6 +40,17 @@
             {% endif %}
         </div>
 
+        <!-- Game replay button -->
+        <div class="game-detail-replay text-center">
+            {% if game.winner %}
+                <button type="button" 
+                    class="btn game-detail-replay-btn mt-2 py-0 px-4"
+                    game_pk="{{game.pk}}"
+                    accept="1"
+                    onclick="replayGameHandler(this)">Replay</button>
+            {% endif %}
+        </div>
+
         <!-- Game map -->
         {% with ended_game_class=game|get_disabled_game_class %}
             <div class="{{'game-detail-map text-center mt-4 pt-2'|change_class:ended_game_class}}">
@@ -56,6 +67,7 @@
                                 <div 
                                     class="{{'map-item py-4 player-'|change_class:cell_value}}"
                                     style="cursor: pointer;"
+                                    name="{{i|add:1}}{{j|add:1}}"
                                     y="{{i|add:1}}"
                                     x="{{j|add:1}}"
                                     onclick='cellHandler(this)'

@@ -3,7 +3,7 @@ from django.views.generic import TemplateView
 
 from .views import (
     HomeView, UserNewGameListView, GameDetailView,
-    GameHistoryListView, whether_my_move
+    GameHistoryListView, whether_my_move, game_steps
 )
 
 app_name='c4'
@@ -15,5 +15,6 @@ urlpatterns = [
     path('history/', GameHistoryListView.as_view(), name='history'),
     path('game/<int:pk>/', GameDetailView.as_view(), name='game'),
     path('game/<int:pk>/my_move/', whether_my_move),
+    path('game/<int:pk>/steps/', game_steps),
     # path('logout', RegisterView.as_view(), name='logout'),
 ]
