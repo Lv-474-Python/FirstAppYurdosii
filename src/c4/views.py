@@ -4,6 +4,7 @@ from django.db import IntegrityError
 from django.db.models import Q
 from django.urls import reverse
 from django.shortcuts import render
+from django.utils.timezone import get_current_timezone
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.views.generic import (
@@ -134,6 +135,7 @@ class UserNewGameListView(LoginRequiredMixin, ListView):
     context_object_name = 'users'
     template_name = "c4/new_game.html"
     paginate_by = 7
+    ordering = ['username']
 
     def get_queryset(self):
         qs = super().get_queryset()
@@ -200,11 +202,12 @@ class GameHistoryListView(LoginRequiredMixin, ListView):
         else:
             game_pk = int(request.POST['game_pk'])
             game = Game.objects.get(pk=game_pk)
+            timezone = get_current_timezone()
             accept = bool(int(accept[0]))
             game.is_accepted = accept
-            game.start_datetime = datetime.now() + timedelta(hours=2)
+            game.start_datetime = datetime.now(tz=timezone) + timedelta(hours=2)
             if not accept:
-                game.end_datetime = datetime.now() + timedelta(hours=2)
+                game.end_datetime = datetime.now(tz=timezone) + timedelta(hours=2)
             try:
                 game.save()
                 status = True
