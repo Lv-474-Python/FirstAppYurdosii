@@ -1,4 +1,5 @@
 from utils.constants import C4_ROW_NUMBER, C4_COLUMN_NUMBER
+from utils.enums import MapValue, WinMethod
 
 
 def check_map(game_map):
@@ -16,7 +17,8 @@ def check_map(game_map):
     for col in range(C4_COLUMN_NUMBER):
         if game_map[-1][col]:  # if col of game map isn't empty
             row = get_last_row(game_map, col)
-            win.extend(check_position(game_map, row, col))
+            if row != -1:
+                win.extend(check_position(game_map, row, col))
     if win:
         win = list(set(win))
         return (True, get_win_map(game_map, win))
@@ -48,18 +50,18 @@ def change_map(game_map, win_case):
             - method - win case method
     """
     row, col, method = win_case
-    if method == 'h':
+    if method is WinMethod.HORIZONTAL:
         for i in range(4):
-            game_map[row][col+i] = 3
-    elif method == 'v':
+            game_map[row][col+i] = MapValue.WINNER
+    elif method is WinMethod.VERTICAL:
         for i in range(4):
-            game_map[row+i][col] = 3
-    elif method == 'dl':
+            game_map[row+i][col] = MapValue.WINNER
+    elif method is WinMethod.DIAGONAL_LEFT:
         for i in range(4):
-            game_map[row+i][col-i] = 3
-    elif method == 'dr':
+            game_map[row+i][col-i] = MapValue.WINNER
+    elif method is WinMethod.DIAGONAL_RIGHT:
         for i in range(4):
-            game_map[row+i][col+i] = 3
+            game_map[row+i][col+i] = MapValue.WINNER
 
 def check_position(game_map, row, col):
     #TODO - enum for win methods
@@ -102,7 +104,7 @@ def check_position_horizontal(game_map, row, col, user_value):
     win_cases = []
     for i in range(left, right - 4 + 1):
         if all([1 if game_map[row][j] == user_value else 0 for j in range(i, i + 4)]):
-            win_cases.append((row, i, 'h'))
+            win_cases.append((row, i, WinMethod.HORIZONTAL))
     return win_cases
 
 def check_position_vertical(game_map, row, col, user_value):
@@ -113,7 +115,7 @@ def check_position_vertical(game_map, row, col, user_value):
     win_cases = []
     for i in range(up, low - 4 + 1):
         if all([1 if game_map[j][col] == user_value else 0 for j in range(i, i + 4)]):
-            win_cases.append((i, col, 'v'))
+            win_cases.append((i, col, WinMethod.VERTICAL))
     return win_cases
 
 def check_position_diagonal_left(game_map, row, col, user_value):
@@ -135,7 +137,7 @@ def check_position_diagonal_left(game_map, row, col, user_value):
     number_of_fours = get_number_of_fours(up, low, left, right)
     for i in range(number_of_fours):
         if all([1 if game_map[up+i+j][right-i-j] == user_value else 0 for j in range(0, 4)]):
-            win_cases.append((up+i, right-i, 'dl'))
+            win_cases.append((up+i, right-i, WinMethod.DIAGONAL_LEFT))
     return win_cases
 
 def check_position_diagonal_right(game_map, row, col, user_value):
@@ -157,7 +159,7 @@ def check_position_diagonal_right(game_map, row, col, user_value):
     number_of_fours = get_number_of_fours(up, low, left, right)
     for i in range(number_of_fours):
         if all([1 if game_map[up+i+j][left+i+j] == user_value else 0 for j in range(0, 4)]):
-            win_cases.append((up+i, left+i, 'dr'))
+            win_cases.append((up+i, left+i, WinMethod.DIAGONAL_RIGHT))
     return win_cases
 
 def get_position_limits(row, col):
@@ -185,6 +187,6 @@ def get_last_row(game_map, col):
         int -- row of step from top
     """
     for i in range(C4_ROW_NUMBER):
-        if game_map[i][col]:
+        if game_map[i][col] in [MapValue.PLAYER_1, MapValue.PLAYER_2]:
             return i
     return -1

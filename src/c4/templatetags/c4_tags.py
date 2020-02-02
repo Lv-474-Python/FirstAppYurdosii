@@ -1,6 +1,6 @@
 from django import template
 
-from ..models import Game
+from ..models import Game, MapValue
 
 #https://docs.djangoproject.com/en/3.0/howto/custom-template-tags/
 
@@ -18,7 +18,10 @@ def my_index(values, i): #, *args, **kwargs):
     Returns:
         int -- list value by index
     """
-    return values[i]
+    value = values[i]
+    if isinstance(value, MapValue):
+        return value.value
+    return value
 
 @register.filter
 def change_class(class_value, addition):

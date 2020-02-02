@@ -3,11 +3,13 @@ from datetime import datetime, timedelta
 from django.db import models, IntegrityError
 from django.db.models import Q
 from django.urls import reverse
+from django.utils.timezone import get_current_timezone
 from django.contrib.auth.models import User
 
 from utils.constants import (
     C4_ROW_NUMBER, C4_COLUMN_NUMBER, MAX_MOVES_NUMBER
 )
+from utils.enums import MapValue
 from .algorithm import check_map
 
 
@@ -118,14 +120,7 @@ class Game(models.Model):
             return None
 
     def get_game_map(self):
-        #TODO - enum на значення карти
         """Return map of steps of the current game.
-
-        Map values:
-            0 - cell is empty
-            1 - player_1's move
-            2 - player_2's move
-            3 - winner's move
 
         Returns:
             list -- matrix of steps (map)
@@ -133,17 +128,22 @@ class Game(models.Model):
         steps = self.get_game_steps()
         map_n = C4_ROW_NUMBER
         map_m = C4_COLUMN_NUMBER
-        step_map = [[0 for _ in range(map_m)] for _ in range(map_n)]
+        step_map = [[MapValue.EMPTY for _ in range(map_m)] for _ in range(map_n)]
         for step in steps:
-            step_map[step.y-1][step.x-1] = 1 if step.user == self.player_1 else 2
+            if step.user == self.player_1:
+                step_map[step.y-1][step.x-1] = MapValue.PLAYER_1
+            else:
+                 step_map[step.y-1][step.x-1] = MapValue.PLAYER_2
+
         is_won, game_map = check_map(step_map)
         if is_won and not self.end_datetime:
-            self.end_datetime = datetime.now() + timedelta(hours=2)
+            self.end_datetime = datetime.now(tz=get_current_timezone()) + timedelta(hours=2)
             self.winner = steps.last().user
             self.save()
         elif steps.count() == MAX_MOVES_NUMBER:
-            self.end_datetime = datetime.now() + timedelta(hours=2)
+            self.end_datetime = datetime.now(tz=get_current_timezone()) + timedelta(hours=2)
             self.save()
+
         return game_map
 
     def get_turn_user(self):
