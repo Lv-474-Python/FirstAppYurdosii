@@ -39,7 +39,6 @@ def get_win_map(game_map, win):
     return game_map
 
 def change_map(game_map, win_case):
-    #TODO - enum for win methods
     """Having 1 particular win case - change game map
 
     Arguments:
@@ -64,7 +63,6 @@ def change_map(game_map, win_case):
             game_map[row+i][col+i] = MapValue.WINNER
 
 def check_position(game_map, row, col):
-    #TODO - enum for win methods
     """Check if step on (row, col) (y, x) inside win combinations
 
     Arguments:
@@ -98,7 +96,7 @@ def check_position(game_map, row, col):
 
 def check_position_horizontal(game_map, row, col, user_value):
     #TODO - docstring
-    _, _, left, right  = get_position_limits(row, col)
+    _, _, left, right = get_position_limits(row, col)
     right += 1
 
     win_cases = []
@@ -109,7 +107,7 @@ def check_position_horizontal(game_map, row, col, user_value):
 
 def check_position_vertical(game_map, row, col, user_value):
     #TODO - docstring
-    up, low, _, _  = get_position_limits(row, col)
+    up, low, _, _ = get_position_limits(row, col)
     low += 1
 
     win_cases = []
@@ -129,7 +127,7 @@ def check_position_diagonal_left(game_map, row, col, user_value):
 
     # change left and low
     less_diff = col - left if col - left < low - row else low - row
-    left = col - less_diff 
+    left = col - less_diff
     low = row + less_diff
 
     # calculate win cases

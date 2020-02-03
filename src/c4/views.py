@@ -266,7 +266,7 @@ class GameHistoryListView(LoginRequiredMixin, ListView):
             if not accept:
                 game.end_datetime = datetime.now(tz=timezone) + timedelta(hours=2)
             try:
-                game.save() 
+                game.save()
                 status = True
             except IntegrityError:
                 status = False

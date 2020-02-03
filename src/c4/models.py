@@ -133,7 +133,7 @@ class Game(models.Model):
             if step.user == self.player_1:
                 step_map[step.y-1][step.x-1] = MapValue.PLAYER_1
             else:
-                 step_map[step.y-1][step.x-1] = MapValue.PLAYER_2
+                step_map[step.y-1][step.x-1] = MapValue.PLAYER_2
 
         is_won, game_map = check_map(step_map)
         if is_won and not self.end_datetime:

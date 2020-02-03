@@ -7,7 +7,7 @@ extension-pkg-whitelist=
 
 # Add files or directories to the blacklist. They should be base names, not
 # paths.
-ignore=CVS, local_settings.py, urls.py, manage.py, settings.py, asgi.py, requirements.txt, package-lock.json
+ignore=CVS, local_settings.py, urls.py, manage.py, settings.py, asgi.py, requirements.txt, package-lock.json, test_algorithm.py
 
 # Add files or directories matching the regex patterns to the blacklist. The
 # regex matches against base names, not paths.
