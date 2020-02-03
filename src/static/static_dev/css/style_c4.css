@@ -229,6 +229,9 @@ body {
 }
 
 
+.pagination-form {
+    display: inline;
+}
 .new-game-pagination {
     font-size: 1.5rem;
 }

@@ -1,9 +1,10 @@
 from datetime import datetime, timedelta
+from urllib.parse import urlencode
 
 from django.db import IntegrityError
 from django.db.models import Q
 from django.urls import reverse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.utils.timezone import get_current_timezone
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
@@ -186,6 +187,14 @@ class UserNewGameListView(LoginRequiredMixin, ListView):
         # pdb.set_trace()
         return result
 
+    def get(self, request, *args, **kwargs):
+        query = request.GET.get('q', None)
+        if query is None:
+            url_reversed = reverse('c4:new-game')
+            url_encoded = urlencode({'q': '', 'page': 1})
+            return redirect(f"{url_reversed}?{url_encoded}")
+        return super().get(request, *args, **kwargs)
+
     def post(self, request, *args, **kwargs):
         """Post request for creating new game
 
@@ -226,6 +235,15 @@ class GameHistoryListView(LoginRequiredMixin, ListView):
         context['all_games'] = self.get_queryset_by_user()
         return context
 
+    def get(self, request, *args, **kwargs):
+        query = request.GET.get('q', None)
+        if query is None:
+            url_reversed = reverse('c4:history')
+            url_encoded = urlencode({'q': 'progress', 'page': 1})
+            return redirect(f"{url_reversed}?{url_encoded}")
+        return super().get(request, *args, **kwargs)
+
+
     def post(self, request, *args, **kwargs):
         """Post request for accept / decline game
 
@@ -248,7 +266,7 @@ class GameHistoryListView(LoginRequiredMixin, ListView):
             if not accept:
                 game.end_datetime = datetime.now(tz=timezone) + timedelta(hours=2)
             try:
-                game.save()
+                game.save() 
                 status = True
             except IntegrityError:
                 status = False

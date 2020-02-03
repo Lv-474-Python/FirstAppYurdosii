@@ -67,12 +67,27 @@
         <!-- //TODO - responsive pagination menu-->
         <div class="pagination new-game-pagination justify-content-center mt-4">
             <span class="step-links text-center">
+            <form method='GET' action="." class="pagination-form">
+
+                <input type='hidden' name='q' value="{{request.GET.q}}"/>
+
                 {% if page_obj.has_previous %}
-                    <a class='new-game-page-btn px-2 py-1' type='button' href="?page=1">&laquo; first</a>
-                    <a class='new-game-page-btn px-2 py-1' type='button' href="?page={{ page_obj.previous_page_number }}">&lsaquo; prev</a>
+                    <button 
+                        class='new-game-page-btn px-2' name='page'
+                        value="1" type='submit'>&laquo; first
+                    </button>
+                    <button 
+                        class='new-game-page-btn px-2' name='page'
+                        value="{{ page_obj.previous_page_number }}"
+                        type='submit'>&lsaquo; prev
+                    </button>
                 {% else %}
-                    <a class='new-game-page-btn-disabled px-2 py-1' type='button'>&laquo; first</a>
-                    <a class='new-game-page-btn-disabled px-2 py-1' type='button'>&lsaquo; prev</a>
+                    <button 
+                        class='new-game-page-btn-disabled px-2' name='page' type='submit'>&laquo; first
+                    </button>
+                    <button 
+                        class='new-game-page-btn-disabled px-2' name='page' type='submit'>&lsaquo; prev
+                    </button>
                 {% endif %}
 
                 <span class="current">
@@ -80,12 +95,23 @@
                 </span>
 
                 {% if page_obj.has_next %}
-                    <a class='new-game-page-btn px-2 py-1' type='button' href="?page={{ page_obj.next_page_number }}">next &rsaquo;</a>
-                    <a class='new-game-page-btn px-2 py-1' type='button' href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+                    <button class='new-game-page-btn px-2' name='page'
+                        value="{{page_obj.next_page_number}}" type='submit'>next &rsaquo;
+                    </button>
+                    <button class='new-game-page-btn px-2' name='page'
+                        value="{{ page_obj.paginator.num_pages }}"
+                        type='submit'>last &raquo;
+                    </button>
                 {% else %}
-                    <a class='new-game-page-btn-disabled px-2 py-1' type='button'>next &rsaquo;</a>
-                    <a class='new-game-page-btn-disabled px-2 py-1' type='button'>last &raquo;</a>
+                    <button class='new-game-page-btn-disabled px-2'     
+                        name='page' type='submit'>next &rsaquo;
+                    </button>
+                    <button class='new-game-page-btn-disabled px-2' 
+                        name='page' type='submit'>last &raquo;
+                    </button>
                 {% endif %}
+
+            </form>
             </span>
         </div>
 
