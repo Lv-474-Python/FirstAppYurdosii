@@ -2,3 +2,5 @@
 C4_ROW_NUMBER = 6
 C4_COLUMN_NUMBER = 7
 MAX_MOVES_NUMBER = 42
+
+TIME_DELTA_OFFSET = 2 # because of timezone

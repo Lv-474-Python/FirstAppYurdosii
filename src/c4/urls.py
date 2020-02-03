@@ -16,5 +16,4 @@ urlpatterns = [
     path('game/<int:pk>/', GameDetailView.as_view(), name='game'),
     path('game/<int:pk>/my_move/', whether_my_move),
     path('game/<int:pk>/steps/', game_steps),
-    # path('logout', RegisterView.as_view(), name='logout'),
 ]

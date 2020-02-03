@@ -1,47 +1,17 @@
 from datetime import datetime, timedelta
 
 from django.db import models, IntegrityError
-from django.db.models import Q
 from django.urls import reverse
 from django.utils.timezone import get_current_timezone
 from django.contrib.auth.models import User
 
 from utils.constants import (
-    C4_ROW_NUMBER, C4_COLUMN_NUMBER, MAX_MOVES_NUMBER
+    C4_ROW_NUMBER, C4_COLUMN_NUMBER, MAX_MOVES_NUMBER,
+    TIME_DELTA_OFFSET
 )
-from utils.enums import MapValue
+from utils.enums import MapValue, GameStatus
+from .utils import GameManager
 from .algorithm import check_map
-
-
-class GameQuerySet(models.QuerySet):
-    def search(self, query, **kwargs):
-        if query:
-            requested_user = kwargs.get('requested_user', None)
-            if requested_user:
-                ids_list = self.search_by_title(query, requested_user)
-                qs = self.filter(
-                    Q(player_1__username__icontains=query) |
-                    Q(player_2__username__icontains=query) |
-                    Q(pk__in=ids_list)
-                ).distinct()
-                # import pdb
-                # pdb.set_trace()
-                return qs
-            return self
-        return self
-
-    def search_by_title(self, query, user):
-        ids_list = [game.pk for game in self if query.lower() in game.get_game_status(user).lower()]
-        return ids_list
-
-
-class GameManager(models.Manager):
-    def get_queryset(self):
-        return GameQuerySet(self.model, using=self._db)
-
-    def search(self, query, *args, **kwargs):
-        print('Manager')
-        return self.get_queryset().search(query, *args, **kwargs)
 
 
 class Game(models.Model):
@@ -137,11 +107,13 @@ class Game(models.Model):
 
         is_won, game_map = check_map(step_map)
         if is_won and not self.end_datetime:
-            self.end_datetime = datetime.now(tz=get_current_timezone()) + timedelta(hours=2)
+            timezone = get_current_timezone()
+            self.end_datetime = datetime.now(tz=timezone) + timedelta(hours=TIME_DELTA_OFFSET)
             self.winner = steps.last().user
             self.save()
         elif steps.count() == MAX_MOVES_NUMBER:
-            self.end_datetime = datetime.now(tz=get_current_timezone()) + timedelta(hours=2)
+            timezone = get_current_timezone()
+            self.end_datetime = datetime.now(tz=timezone) + timedelta(hours=TIME_DELTA_OFFSET)
             self.save()
 
         return game_map
@@ -164,16 +136,25 @@ class Game(models.Model):
         Returns:
             str -- game status
         """
-        status = "Lost"
+        status = GameStatus.LOST
         if not self.is_accepted and self.end_datetime:
-            status = "Rejected" if self.player_1 == request_user else "Declined"
+            if self.player_1 == request_user:
+                status = GameStatus.REJECTED
+            else:
+                status = GameStatus.DECLINED
         elif not self.is_accepted and not self.end_datetime:
-            status = "Waiting" if self.player_1.username == request_user.username else "Accept"
+            if self.player_1.username == request_user.username:
+                status = GameStatus.WAITING
+            else:
+                status = GameStatus.ACCEPT
         elif not self.winner:
-            status = "Draw" if self.moves_number == MAX_MOVES_NUMBER else "In Progress"
+            if self.moves_number == MAX_MOVES_NUMBER:
+                status = GameStatus.DRAW
+            else:
+                status = GameStatus.PROGRESS
         elif request_user == self.winner:
-            status = "Won"
-        return status
+            status = GameStatus.WON
+        return status.value
 
     def get_game_steps(self):
         """Get steps of particular gam
@@ -182,6 +163,19 @@ class Game(models.Model):
             QuerySet -- game's steps
         """
         return Step.objects.filter(game=self)
+
+    def set_game_accepted(self, accept):
+        """Accept / Decline game
+
+        Arguments:
+            accept {bool} -- whether game is accepted
+        """
+        timezone = get_current_timezone()
+        self.is_accepted = accept
+        self.start_datetime = datetime.now(tz=timezone) + timedelta(hours=TIME_DELTA_OFFSET)
+        if not self.is_accepted:
+            self.end_datetime = datetime.now(tz=timezone) + timedelta(hours=TIME_DELTA_OFFSET)
+        self.save()
 
 
 class Step(models.Model):

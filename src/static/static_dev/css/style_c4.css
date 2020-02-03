@@ -93,6 +93,12 @@ body {
     font-size: 2rem;
     font-weight: 500;
 }
+.game-detail-title-player-1 {
+    color: #f7f735;
+}
+.game-detail-title-player-2 {
+    color: red;
+}
 
 .game-detail-move {
     font-size: 1.5rem;

@@ -43,10 +43,10 @@ def change_map(game_map, win_case):
 
     Arguments:
         game_map {matrix} -- game map
-        win_case {tuple(row, col, method)} --
-            - row - y of step of which win case starts
-            - col - x of step of which win case starts
-            - method - win case method
+        win_case {tuple(int, int, WinMethod)} --
+            - int - y (row) of step of which win case starts
+            - int - x (col) of step of which win case starts
+            - WinMethod - win case method
     """
     row, col, method = win_case
     if method is WinMethod.HORIZONTAL:
@@ -95,7 +95,17 @@ def check_position(game_map, row, col):
     return win
 
 def check_position_horizontal(game_map, row, col, user_value):
-    #TODO - docstring
+    """Check for horizontal win cases
+
+    Arguments:
+        game_map {matrix} -- game map
+        row {int} -- position's row (y)
+        col {int} -- position's column (x)
+        user_value {MapValue} -- user value at (x, y)
+
+    Returns:
+        list -- horizontal win cases
+    """
     _, _, left, right = get_position_limits(row, col)
     right += 1
 
@@ -106,24 +116,44 @@ def check_position_horizontal(game_map, row, col, user_value):
     return win_cases
 
 def check_position_vertical(game_map, row, col, user_value):
-    #TODO - docstring
-    up, low, _, _ = get_position_limits(row, col)
+    """Check for vertical win cases
+
+    Arguments:
+        game_map {matrix} -- game map
+        row {int} -- position's row (y)
+        col {int} -- position's column (x)
+        user_value {MapValue} -- user value at (x, y)
+
+    Returns:
+        list -- vertical win cases
+    """
+    high, low, _, _ = get_position_limits(row, col)
     low += 1
 
     win_cases = []
-    for i in range(up, low - 4 + 1):
+    for i in range(high, low - 4 + 1):
         if all([1 if game_map[j][col] == user_value else 0 for j in range(i, i + 4)]):
             win_cases.append((i, col, WinMethod.VERTICAL))
     return win_cases
 
 def check_position_diagonal_left(game_map, row, col, user_value):
-    #TODO - docstring
-    up, low, left, right = get_position_limits(row, col)
+    """Check for diagonal left (/) win cases
 
-    # change right and up
-    less_diff = right - col if right - col < row - up else row - up
+    Arguments:
+        game_map {matrix} -- game map
+        row {int} -- position's row (y)
+        col {int} -- position's column (x)
+        user_value {MapValue} -- user value at (x, y)
+
+    Returns:
+        list -- diagonal left win cases
+    """
+    high, low, left, right = get_position_limits(row, col)
+
+    # change right and high
+    less_diff = right - col if right - col < row - high else row - high
     right = col + less_diff
-    up = row - less_diff
+    high = row - less_diff
 
     # change left and low
     less_diff = col - left if col - left < low - row else low - row
@@ -132,20 +162,30 @@ def check_position_diagonal_left(game_map, row, col, user_value):
 
     # calculate win cases
     win_cases = []
-    number_of_fours = get_number_of_fours(up, low, left, right)
+    number_of_fours = get_number_of_fours(high, low, left, right)
     for i in range(number_of_fours):
-        if all([1 if game_map[up+i+j][right-i-j] == user_value else 0 for j in range(0, 4)]):
-            win_cases.append((up+i, right-i, WinMethod.DIAGONAL_LEFT))
+        if all([1 if game_map[high+i+j][right-i-j] == user_value else 0 for j in range(0, 4)]):
+            win_cases.append((high+i, right-i, WinMethod.DIAGONAL_LEFT))
     return win_cases
 
 def check_position_diagonal_right(game_map, row, col, user_value):
-    #TODO - docstring
-    up, low, left, right = get_position_limits(row, col)
+    """Check for diagonal right (\\) win cases
 
-    # change left and up
-    less_diff = col - left if col - left < row - up else row - up
+    Arguments:
+        game_map {matrix} -- game map
+        row {int} -- position's row (y)
+        col {int} -- position's column (x)
+        user_value {MapValue} -- user value at (x, y)
+
+    Returns:
+        list -- diagonal right win cases
+    """
+    high, low, left, right = get_position_limits(row, col)
+
+    # change left and high
+    less_diff = col - left if col - left < row - high else row - high
     left = col - less_diff
-    up = row - less_diff
+    high = row - less_diff
 
     # change right and low
     less_diff = right - col if right - col < low - row else low - row
@@ -154,23 +194,41 @@ def check_position_diagonal_right(game_map, row, col, user_value):
 
     # calculate win cases
     win_cases = []
-    number_of_fours = get_number_of_fours(up, low, left, right)
+    number_of_fours = get_number_of_fours(high, low, left, right)
     for i in range(number_of_fours):
-        if all([1 if game_map[up+i+j][left+i+j] == user_value else 0 for j in range(0, 4)]):
-            win_cases.append((up+i, left+i, WinMethod.DIAGONAL_RIGHT))
+        if all([1 if game_map[high+i+j][left+i+j] == user_value else 0 for j in range(0, 4)]):
+            win_cases.append((high+i, left+i, WinMethod.DIAGONAL_RIGHT))
     return win_cases
 
 def get_position_limits(row, col):
-    #TODO - docstring
-    up = 0 if row - 3 <= 0 else row - 3
+    """Given position's row(y) and col(x) return it's high, low, left, right limits
+
+    Arguments:
+        row {int} -- position's row (y)
+        col {int} -- position's column (x)
+
+    Returns:
+        tuple(int, int, int, int) -- tuple with high, low, left and right position limits
+    """
+    high = 0 if row - 3 <= 0 else row - 3
     low = C4_ROW_NUMBER - 1 if row + 3 >= C4_ROW_NUMBER else row + 3
     left = 0 if col - 3 <= 0 else col - 3
     right = C4_COLUMN_NUMBER - 1 if col + 3 >= C4_COLUMN_NUMBER else col + 3
-    return (up, low, left, right)
+    return (high, low, left, right)
 
-def get_number_of_fours(up, low, left, right):
-    #TODO - docstring
-    number_of_fours = int(((left-right)**2 + (low-up)**2)**0.5) - 4 + 1
+def get_number_of_fours(high, low, left, right):
+    """Return number of fours that possible in diagonal by given limits
+
+    Arguments:
+        high {int} -- position's high limit
+        low {int} -- position's low limit
+        left {int} -- position's low limit
+        right {[type]} -- position's right limit
+
+    Returns:
+        int -- number of fours
+    """
+    number_of_fours = int(((left-right)**2 + (low-high)**2)**0.5) - 4 + 1
     number_of_fours = 3 if number_of_fours >= 3 else number_of_fours
     return number_of_fours
 

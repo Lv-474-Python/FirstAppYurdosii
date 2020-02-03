@@ -1,18 +1,16 @@
-from datetime import datetime, timedelta
 from urllib.parse import urlencode
 
 from django.db import IntegrityError
 from django.db.models import Q
 from django.urls import reverse
 from django.shortcuts import render, redirect
-from django.utils.timezone import get_current_timezone
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.views.generic import (
     TemplateView, DetailView, ListView
 )
 from django.http import (
-    JsonResponse, HttpResponseNotFound, HttpResponseRedirect
+    JsonResponse, HttpResponseRedirect, Http404
 )
 
 from utils.constants import (
@@ -77,29 +75,6 @@ class GameDetailView(LoginRequiredMixin, DetailView):
 
         return render(request, self.template_name, context)
 
-    # def head(self, request, *args, **kwargs):
-    #     """Return whether requested user should move
-
-    #     Arguments:
-    #         request {WSGIRequest} -- request
-
-    #     Returns:
-    #         dict (JsonResponse) --
-    #             my_move (bool) - whether requested user should move
-    #     """
-    #     # import pdb
-    #     # pdb.set_trace()
-    #     game = self.get_object()
-    #     steps = game.get_game_steps()
-    #     if not steps:
-    #         my_move = request.user == game.player_1
-    #     else:
-    #         last_user = steps.last().user
-    #         my_move = request.user != last_user
-    #     print(f'{my_move=}')
-    #     return HttpResponse({'my_move': my_move})
-
-
     def get_turn_username(self, request_user):
         """Get current turn user username
 
@@ -123,12 +98,6 @@ class GameDetailView(LoginRequiredMixin, DetailView):
         turn_user = p_2 if steps.last().user == p_1 else p_1
         return 'Your' if turn_user == request_user else turn_user.username
 
-    def set_context_win(self, context):
-        game = self.object
-        context['player_1_endgame'] = ' player-3' if game.player_1 == game.winner else ''
-        context['player_2_endgame'] = ' player-3' if game.player_2 == game.winner else ''
-        return context
-
 
 def whether_my_move(request, *args, **kwargs):
     """Return whether requested user should move
@@ -151,9 +120,20 @@ def whether_my_move(request, *args, **kwargs):
             my_move = request.user != last_user
         return JsonResponse({'my_move': my_move})
     except Game.DoesNotExist:
-        return HttpResponseNotFound('<h1>Not Found</h1>')
+        raise Http404
 
 def game_steps(request, *args, **kwargs):
+    """Return steps of game consisting of 'x', 'y', 'user'
+
+    Arguments:
+        request {WSGIRequest} -- request
+
+    Raises:
+        Http404: if game with given game_pk does not exist
+
+    Returns:
+        JsonResponse -- list of steps
+    """
     game_pk = kwargs['pk']
     try:
         game = Game.objects.get(pk=game_pk)
@@ -167,7 +147,7 @@ def game_steps(request, *args, **kwargs):
 
         return JsonResponse(data)
     except Game.DoesNotExist:
-        return HttpResponseNotFound('<h1>Not Found</h1>')
+        raise Http404
 
 
 class UserNewGameListView(LoginRequiredMixin, ListView):
@@ -183,8 +163,6 @@ class UserNewGameListView(LoginRequiredMixin, ListView):
         query = self.request.GET.get('q', None)
         if query:
             result = result.filter(username__icontains=query)
-        # import pdb
-        # pdb.set_trace()
         return result
 
     def get(self, request, *args, **kwargs):
@@ -239,7 +217,8 @@ class GameHistoryListView(LoginRequiredMixin, ListView):
         query = request.GET.get('q', None)
         if query is None:
             url_reversed = reverse('c4:history')
-            url_encoded = urlencode({'q': 'progress', 'page': 1})
+            # url_encoded = urlencode({'q': 'progress', 'page': 1})
+            url_encoded = urlencode({'q': '', 'page': 1})
             return redirect(f"{url_reversed}?{url_encoded}")
         return super().get(request, *args, **kwargs)
 
@@ -257,17 +236,12 @@ class GameHistoryListView(LoginRequiredMixin, ListView):
         if accept is None:
             status = False
         else:
-            game_pk = int(request.POST['game_pk'])
-            game = Game.objects.get(pk=game_pk)
-            timezone = get_current_timezone()
-            accept = bool(int(accept[0]))
-            game.is_accepted = accept
-            game.start_datetime = datetime.now(tz=timezone) + timedelta(hours=2)
-            if not accept:
-                game.end_datetime = datetime.now(tz=timezone) + timedelta(hours=2)
+            game_pk = int(request.POST.get('game_pk', None))
             try:
-                game.save()
+                game = Game.objects.get(pk=game_pk)
+                game.set_game_accepted(bool(int(accept[0])))
                 status = True
-            except IntegrityError:
+            except (IntegrityError, Game.DoesNotExist):
                 status = False
+                # raise Http404
         return JsonResponse({'status': status})

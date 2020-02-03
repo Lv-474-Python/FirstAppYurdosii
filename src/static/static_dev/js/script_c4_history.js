@@ -1,29 +1,8 @@
 $(document).ready(function() {
-    blink_accept();
-
     console.log( "ready!" );
+
 });
 
-
-function blink_accept() {
-    let games = document.getElementsByClassName("history-game-accept");
-    let current = games[0].style.backgroundColor;
-    let change = '#ffff74';
-    for (let i = 0; i < games.length; ++i) {
-        // let current_opacity = 0
-        // setInterval(() => {
-        //     current_opacity = Math.abs(current_opacity - 1)
-        //     games[i].style.opacity = current_opacity;
-        // }, 700);
-        console.log(games[i])
-    }
-
-    // let current_opacity = 0
-    // setInterval(() => {
-    //     current_opacity = Math.abs(current_opacity - 0.8)
-    //     current_turn_class.style.opacity = current_opacity;
-    // }, 700);
-}
 
 function choiceGameHandler(btn) {
     let data = {};

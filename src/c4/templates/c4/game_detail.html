@@ -18,7 +18,7 @@
         
         <!-- Game detail title -->
         <div class="game-detail-title text-center mt-3">
-            Game #{{game.pk}}: {{game.player_1.username}} vs {{game.player_2.username}}
+            Game #{{game.pk}}: <span class='game-detail-title-player-1'>{{game.player_1.username}}</span> vs <span class='game-detail-title-player-2'>{{game.player_2.username}}</span>
         </div>
 
         <!-- Game detail player's move -->
@@ -42,7 +42,7 @@
 
         <!-- Game replay button -->
         <div class="game-detail-replay text-center">
-            {% if game.winner %}
+            {% if game.end_datetime and game.is_accepted %}
                 <button type="button" 
                     class="btn game-detail-replay-btn mt-2 py-0 px-4"
                     game_pk="{{game.pk}}"

@@ -199,6 +199,7 @@ function replayGameHandler(btn) {
         type: 'GET',
         data: data,
         success: (data) => {
+            console.log(data);
             if (data['status']) {
                 console.log(data);
                 replayGame(data)
@@ -206,6 +207,10 @@ function replayGameHandler(btn) {
                 somethingWentWrong();
             }
         },
+        error: (data) => {
+            console.log('error'); 
+            console.log(data);
+        }
     });
 }
 

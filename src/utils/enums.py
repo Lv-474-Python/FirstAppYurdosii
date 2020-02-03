@@ -13,3 +13,13 @@ class WinMethod(enum.Enum):
     VERTICAL = 1
     DIAGONAL_LEFT = 2
     DIAGONAL_RIGHT = 3
+
+class GameStatus(enum.Enum):
+    LOST = "Lost"
+    REJECTED = "Rejected"
+    DECLINED = "Declined"
+    WAITING = "Waiting"
+    ACCEPT = "To Accept"
+    PROGRESS = "In Progress"
+    DRAW = "Draw"
+    WON = "Won"
