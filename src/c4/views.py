@@ -10,7 +10,7 @@ from django.views.generic import (
     TemplateView, DetailView, ListView
 )
 from django.http import (
-    JsonResponse, HttpResponseRedirect, Http404
+    JsonResponse, HttpResponseRedirect, Http404, HttpResponse
 )
 
 from utils.constants import (
@@ -60,7 +60,7 @@ class GameDetailView(LoginRequiredMixin, DetailView):
         step_y = int(data["y"][0])
         is_correct, errors = Step.check_step(self.object, request.user, step_x)
         if not is_correct:
-            return JsonResponse({'errors': errors})
+            return JsonResponse({'errors': errors}, status=422)
 
         Step.create(self.object, request.user, step_x, step_y)
 
@@ -105,8 +105,11 @@ def whether_my_move(request, *args, **kwargs):
     Arguments:
         request {WSGIRequest} -- request
 
+    Raises:
+        Http404: if game with given game_pk does not exist
+
     Returns:
-        dict (JsonResponse) --
+        JsonResponse (JsonResponse) --
             my_move (bool) - whether requested user should move
     """
     game_pk = kwargs['pk']
@@ -143,7 +146,6 @@ def game_steps(request, *args, **kwargs):
         data['steps'] = steps
         data['player_1_pk'] = game.player_1.pk
         data['player_2_pk'] = game.player_2.pk
-        data['status'] = True
 
         return JsonResponse(data)
     except Game.DoesNotExist:
@@ -174,6 +176,7 @@ class UserNewGameListView(LoginRequiredMixin, ListView):
         return super().get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
+        #TODO - статуси
         """Post request for creating new game
 
         Arguments:
@@ -185,8 +188,9 @@ class UserNewGameListView(LoginRequiredMixin, ListView):
         player_2_username = request.POST['player_2_username']
         player_2 = User.objects.filter(username=player_2_username)[0]
         player_1 = request.user
-        status = bool(Game.create(player_1=player_1, player_2=player_2, is_accepted=False))
-        return JsonResponse({'status': status})
+        game = Game.create(player_1=player_1, player_2=player_2, is_accepted=False)
+        status = 200 if game else 503
+        return HttpResponse(status=status)
 
 
 class GameHistoryListView(LoginRequiredMixin, ListView):
@@ -230,18 +234,23 @@ class GameHistoryListView(LoginRequiredMixin, ListView):
             request {WSGIRequest} -- request
 
         Returns:
-            JsonResponse -- JsonResponse with status (whether post request was successful)
+            JsonResponse -- JsonResponse with code status
         """
         accept = request.POST.get('accept', None)
         if accept is None:
-            status = False
+            status = 400
         else:
-            game_pk = int(request.POST.get('game_pk', None))
+            game_pk = request.POST.get('game_pk', None)
+            game_pk = int(game_pk) if game_pk is not None else None
             try:
                 game = Game.objects.get(pk=game_pk)
                 game.set_game_accepted(bool(int(accept[0])))
-                status = True
-            except (IntegrityError, Game.DoesNotExist):
-                status = False
+                status = 200
+            except Game.DoesNotExist:
+                status = 404
                 # raise Http404
-        return JsonResponse({'status': status})
+            except IntegrityError:
+                #TODO - спитати
+                status = 503
+
+        return HttpResponse(status=status)

@@ -17,13 +17,12 @@ function choiceGameHandler(btn) {
         url: url,
         type: 'POST',
         data: data,
-        success: (data) => {
-            if (data['status']) {
-                document.location.reload();
-            } else {
-                somethingWentWrong();
-            }
+        success: (response) => {
+            document.location.reload();
         },
+        error: (response) => {
+            somethingWentWrong();
+        }
     });
 }
 

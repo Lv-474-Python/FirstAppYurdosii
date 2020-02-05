@@ -66,40 +66,44 @@ function cellHandler(cell) {
         type: 'POST',
         data: data,
         success: ajax_success_handler,
+        error: ajax_error_handler
     });
 }
 
-function ajax_success_handler(data) {
-    if (data['errors']) {
-        $.toast({ 
-            heading: 'Error',
-            icon: 'error',
-            text: data['errors'],
-            textAlign : 'left',
-            textColor : '#fff',
-            bgColor : '#d90400',
-            hideAfter : 2000,
-            stack : 3,
-            position : 'bottom-right',
-            allowToastClose : true,
-            showHideTransition : 'slide',
-            loader: false,
-        })
-    } else if (data['just_won']) {
+function ajax_success_handler(response) {
+    if (response['just_won']) {
         document.location.hash = 'just_won'
         document.location.reload();
-    } else if (data['draw']) {
+    } else if (response['draw']) {
         document.location.hash = 'draw'
         document.location.reload();
     } else {
         // швидкість менша при doc
         // document.location.reload()
-        console.log(data);
+        console.log(response);
         document.open();
-        document.write(data);
+        document.write(response);
         document.close();
         console.log('yep'); 
     }
+}
+
+function ajax_error_handler(response) {
+    let errors = response.responseJSON.errors;
+    $.toast({ 
+        heading: 'Error',
+        icon: 'error',
+        text: errors,
+        textAlign : 'left',
+        textColor : '#fff',
+        bgColor : '#d90400',
+        hideAfter : 2000,
+        stack : 3,
+        position : 'bottom-right',
+        allowToastClose : true,
+        showHideTransition : 'slide',
+        loader: false,
+    });
 }
 
 
@@ -154,8 +158,8 @@ function update_page() {
     $.ajax({
         url: url,
         type: 'GET',
-        success: (data => {
-            is_my_turn = data['my_move'];
+        success: (response => {
+            is_my_turn = response['my_move'];
         }),
     });
 
@@ -164,7 +168,7 @@ function update_page() {
         $.ajax({
             url: url,
             type: 'GET',
-            success: (data) => {
+            success: (response) => {
                 // console.log(id);
                 // console.log(url);
                 // console.log(is_my_turn);
@@ -172,12 +176,12 @@ function update_page() {
                 // console.log();
                 // id += 1;
 
-                if (is_my_turn != data['my_move']) {
-                    if (data['my_move'] = true) {
+                if (is_my_turn != response['my_move']) {
+                    if (response['my_move'] = true) {
                         // console.log('RELOAD');
                         document.location.reload();
                     }
-                    is_my_turn = data['my_move'];
+                    is_my_turn = response['my_move'];
                 }
             },
         });
@@ -193,23 +197,18 @@ function replayGameHandler(btn) {
 
     let url_obj = new URL(document.location.href);
     const url = url_obj['origin'] + url_obj['pathname']  + 'steps/';
-    console.log(url);
+    // console.log(url);
     $.ajax({
         url: url,
         type: 'GET',
         data: data,
-        success: (data) => {
-            console.log(data);
-            if (data['status']) {
-                console.log(data);
-                replayGame(data)
-            } else {
-                somethingWentWrong();
-            }
+        success: (response) => {
+            replayGame(response)
         },
-        error: (data) => {
-            console.log('error'); 
-            console.log(data);
+        error: (response) => {
+            // console.log('error');
+            // console.log(response);
+            somethingWentWrong();
         }
     });
 }
