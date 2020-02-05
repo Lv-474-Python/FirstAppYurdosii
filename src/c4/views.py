@@ -47,7 +47,6 @@ class GameDetailView(LoginRequiredMixin, DetailView):
 
         if request.user not in [self.object.player_1, self.object.player_2]:
             return HttpResponseRedirect(reverse("auth:login"))
-        # sessions об'єкт подивитися
 
         context = self.get_context_data()
         return render(request, self.template_name, context)

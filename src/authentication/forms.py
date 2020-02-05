@@ -7,18 +7,11 @@ from .utils import send_activation_email
 class RegisterForm(forms.ModelForm):
     """Form to register new user
 
-    Arguments:
-        forms {[type]} -- [description]
-
     Raises:
         forms.ValidationError: if user with provided username already exists
         forms.ValidationError: if user with provided email already exists
         forms.ValidationError: if two provided passwords don't match
-
-    Returns:
-        [type] -- [description]
     """
-    #TODO - docstring
 
     password1 = forms.CharField()
     password2 = forms.CharField()

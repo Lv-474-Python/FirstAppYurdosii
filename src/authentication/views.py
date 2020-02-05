@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.http import (
-    HttpResponseRedirect, Http404, HttpResponse
+    HttpResponseRedirect, HttpResponse
 )
 
 from .forms import RegisterForm
@@ -23,7 +23,7 @@ class RegisterCreateView(CreateView):
         return super().dispatch(request, *args, **kwargs)
 
 
-def activate_user(request, token=None, *args, **kwargs):
+def activate_user(request, token=None):
     """Activate user by token
 
     Arguments:
@@ -40,7 +40,7 @@ def activate_user(request, token=None, *args, **kwargs):
             decoded_data = decode_token(token, verify=True)
         except ExpiredSignatureError:
             return redirect(reverse('auth:token-expired', args=[token]))
-        
+
         user = get_object_or_404(User, username=decoded_data['username'])
         if not user.is_active:
             user.is_active = True
@@ -53,7 +53,17 @@ class TokenExpiredView(TemplateView):
     template_name = "authentication/token-expired.html"
 
     def get(self, request, *args, **kwargs):
-        #TODO - docstring
+        """Decode token, get user.
+        If user isn't in db (inactive users can be deleted) redirect to account-expired page
+        If user from token or user from request is active - redirect to login page
+        Otherwise render token-expired page
+
+        Arguments:
+            request {WSGIRequest} -- request
+
+        Returns:
+            HttpResponse / HttpResponseRedirect -- token-expired page or redirect to another page
+        """
         super().get(request, *args, **kwargs)
         context = self.get_context_data(token=kwargs['token'])
 
@@ -72,8 +82,15 @@ class TokenExpiredView(TemplateView):
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
-        #TODO - code statuses
-        #TODO - docstring
+        """Resend activation token if token exists and isn't in request.session expired-token list
+
+        Arguments:
+            request {WSGIRequest} -- request
+
+        Returns:
+            HttpResponse -- response with status
+        """
+        #TODO -   всі code статуси переобдумати
         token = kwargs.get('token', None)
         if request.session.get('expired_tokens', None) is None:
             request.session['expired_tokens'] = []
@@ -88,4 +105,4 @@ class TokenExpiredView(TemplateView):
             request.session.modified = True
             print('email sent')
             return HttpResponse(status=200)
-        return HttpResponse(status=403)
+        return HttpResponse(status=400)

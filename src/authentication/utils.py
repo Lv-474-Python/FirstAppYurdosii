@@ -1,5 +1,6 @@
-import jwt
 from datetime import datetime, timedelta
+import jwt
+
 
 from django.urls import reverse
 from django.core.mail import send_mail
@@ -13,7 +14,7 @@ def send_activation_email(user):
         user {User} -- inactive user
 
     Returns:
-        int -- number of successfully delivered messages (which can be 0 or 1 since it can only send one message).
+        int -- number of successfully delivered messages (0 or 1 since it can only send 1 message)
     """
     subject = "Welcome to MyC4 community"
     from_email = settings.DEFAULT_FROM_EMAIL
@@ -44,15 +45,14 @@ def send_activation_email(user):
 
 
 def generate_token(user):
-    """Generate token with payload (user's username, email and expiration datetime) with secret key and algorithm
-    
+    """Generate token containing user's username / email with secret key and algorithm
+
     Arguments:
         user {User} -- inactive user
-    
+
     Returns:
         str -- generated token
-    """    
-    #TODO - постав потім щоб десь 15 хвилин було активний токен
+    """
     payload = {
         'username': user.username,
         'email': user.email,
