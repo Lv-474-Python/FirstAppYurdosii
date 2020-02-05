@@ -1,21 +1,91 @@
-from django.http import HttpResponseRedirect
-from django.views.generic import CreateView
+from jwt import ExpiredSignatureError
+
+from django.views.generic import CreateView, TemplateView
+from django.contrib.auth.models import User
+from django.urls import reverse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.http import (
+    HttpResponseRedirect, Http404, HttpResponse
+)
 
 from .forms import RegisterForm
+from .utils import decode_token, send_activation_email
 
 
 class RegisterCreateView(CreateView):
     form_class = RegisterForm
     template_name = "authentication/register.html"
     success_url = '/auth/login/'
-    success_message = "Your user account was created successfully." #Please check your email."
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        # print(context)
-        return context
 
     def dispatch(self, request, *args, **kwargs):
         if self.request.user.is_authenticated:
             return HttpResponseRedirect("/")
         return super().dispatch(request, *args, **kwargs)
+
+
+def activate_user(request, token=None, *args, **kwargs):
+    """Activate user by token
+
+    Arguments:
+        request {WSGIRequest} -- request
+
+    Keyword Arguments:
+        token {str} -- activation token (default: {None})
+
+    Returns:
+        HttpResponseRedirect -- redirect to another page
+    """
+    if token is not None:
+        try:
+            decoded_data = decode_token(token, verify=True)
+        except ExpiredSignatureError:
+            return redirect(reverse('auth:token-expired', args=[token]))
+        
+        user = get_object_or_404(User, username=decoded_data['username'])
+        if not user.is_active:
+            user.is_active = True
+            user.save()
+        return redirect(reverse("auth:login"))
+    return redirect(reverse("c4:home"))
+
+
+class TokenExpiredView(TemplateView):
+    template_name = "authentication/token-expired.html"
+
+    def get(self, request, *args, **kwargs):
+        #TODO - docstring
+        super().get(request, *args, **kwargs)
+        context = self.get_context_data(token=kwargs['token'])
+
+        token = context['token']
+        decoded_data = decode_token(token, verify=False)
+        username = decoded_data['username']
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            return HttpResponseRedirect(reverse('auth:account-expired'))
+
+        if user.is_active or request.user.is_active:
+            return HttpResponseRedirect(reverse('auth:login'))
+
+        context['user'] = user
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        #TODO - code statuses
+        #TODO - docstring
+        token = kwargs.get('token', None)
+        if request.session.get('expired_tokens', None) is None:
+            request.session['expired_tokens'] = []
+
+        print(f'{request.session.items()=}')
+        if token is not None and token not in request.session['expired_tokens']:
+            username = request.POST.get('username', None)
+            user = get_object_or_404(User, username=username)
+            send_activation_email(user)
+
+            request.session['expired_tokens'].append(token)
+            request.session.modified = True
+            print('email sent')
+            return HttpResponse(status=200)
+        return HttpResponse(status=403)

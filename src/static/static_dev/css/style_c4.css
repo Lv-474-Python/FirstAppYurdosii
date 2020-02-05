@@ -21,7 +21,8 @@ body {
     border-bottom-left-radius: 15px;
     border-bottom-right-radius: 15px;
 } */
-.c4-nav-link{
+.c4-nav-link,
+.c4-nav-link-disabled {
     font-size: 1.1rem;
     font-weight: 400;
     letter-spacing: 2px;
@@ -30,6 +31,10 @@ body {
 .c4-nav-link:hover{
     transition: 0.2s;
     color: rgb(144, 135, 135) !important;
+}
+.c4-nav-link-disabled {
+    cursor: default;
+    border-bottom: 1px solid black;
 }
 .c4-nav-btn {
     /* color: #0B1033 !important; */
@@ -55,19 +60,22 @@ body {
     font-size: 1.5rem;
 }
 
-.btn-start-c4 {
+.btn-start-c4,
+.token-expired-btn {
     background-color: #1B1F24;
     color: #ffffff;
     font-size: 1.2rem;
     font-weight: 500;
 }
-.btn-start-c4:hover {
+.btn-start-c4:hover, 
+.token-expired-btn:hover {
     transition: 1s;
     background-color: #ffffff;
     border: 1px solid #1B1F24;
     color: #1B1F24;
 }
-.btn-start-c4:focus {
+.btn-start-c4:focus,
+.token-expired-btn:focus {
     box-shadow: none;
 }
 
@@ -350,4 +358,23 @@ body {
 .history-game-status-accept-btn:focus,
 .history-game-status-decline-btn:focus {
     box-shadow: none;
+}
+
+
+/* Expired token page */
+.token-expired-title,
+.account-expired-title {
+    font-size: 2rem;
+}
+.token-expired-btn-disabled,
+.token-expired-btn-disabled:hover {
+    color: white;
+    background-color: green;
+    pointer-events: none;
+}
+
+
+/* Account expired title */
+.account-expired-description {
+    font-size: 1.5rem;
 }

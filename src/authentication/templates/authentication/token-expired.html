@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head_title %}Token expired{% endblock head_title %}
+
+{% block head_import %}
+    <script src="{% static 'js/script_auth.js' %}"></script>
+{% endblock head_import %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="token-expired-title">
+        Current token expired
+    </div>
+
+    {% csrf_token %}
+    <div class="mt-3">
+        <button 
+            class="btn token-expired-btn px-3"
+            username="{{user.username}}"
+            onclick="resendTokenHandle(this)">Resend</button>
+    </div>
+</div>
+
+{% endblock content %}

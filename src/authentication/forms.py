@@ -1,6 +1,8 @@
 from django import forms
 from django.contrib.auth.models import User
 
+from .utils import send_activation_email
+
 
 class RegisterForm(forms.ModelForm):
     """Form to register new user
@@ -16,6 +18,7 @@ class RegisterForm(forms.ModelForm):
     Returns:
         [type] -- [description]
     """
+    #TODO - docstring
 
     password1 = forms.CharField()
     password2 = forms.CharField()
@@ -34,7 +37,6 @@ class RegisterForm(forms.ModelForm):
         Returns:
             string -- username
         """
-        print('clean_username')
         username = self.cleaned_data.get("username")
         qs = User.objects.filter(username__iexact=username)
         if qs.exists():
@@ -75,16 +77,15 @@ class RegisterForm(forms.ModelForm):
         """Save created user
 
         Keyword Arguments:
-            commit {bool} -- whether saving should be commited (default: {True})
+            commit {bool} -- whether saving should be committed (default: {True})
 
         Returns:
             django.contrib.auth.models.User -- created user
         """
         user = super(RegisterForm, self).save(commit=False)
         user.set_password(self.cleaned_data["password1"])
-        user.is_active = True
+        user.is_active = False
+        user.save()
 
-        if commit:
-            user.save()
-            # user.profile.send_activation_email()
+        send_activation_email(user)
         return user

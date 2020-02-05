@@ -1,4 +1,5 @@
 {% extends "base_auth.html" %}
+{% load auth_tags %}
 
 {% block head_title %} Log In {% endblock head_title %}
 
@@ -21,7 +22,7 @@
                         <div class="form-group col-8 offset-2 col-md-8 offset-md-2 col-lg-6 offset-lg-3 mt-4">
                             {% if form.errors %}
                                 <div class='errorlist'>
-                                    <p>Your username and password don't match. Please try again.</p>
+                                    <p>{{form.errors|handle_errors}}</p>
                                 </div>
                             {% endif %}
                             <label for="id_username">Username</label>

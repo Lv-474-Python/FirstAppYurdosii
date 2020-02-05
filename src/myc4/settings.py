@@ -25,7 +25,7 @@ SECRET_KEY = 'fr88n@^mr&me*m-!whale9y)rnm#!g(yc$$-=4k6_abvzupjvz'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["127.0.0.1", "10.4.57.244"]
+ALLOWED_HOSTS = ["127.0.0.1", "0.0.0.0", "10.4.57.244"]
 
 
 # Application definition
@@ -133,6 +133,10 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "static", "media")
 LOGOUT_REDIRECT_URL = '/auth/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = '/auth/login'
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.AllowAllUsersModelBackend',
+)
 
 
 # Database
