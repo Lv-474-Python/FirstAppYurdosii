@@ -13,7 +13,7 @@ function requestNewGameHandler(user_row) {
         success: (response) => {
             // console.log('success');
             // console.log(response);
-            user_row.innerText = 'Request sent. Wait';
+            user_row.innerText = 'Request sent. Check your history';
             user_row.className += '-sent';
             user_row.setAttribute('disabled', true);
         },
