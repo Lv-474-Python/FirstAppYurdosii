@@ -33,6 +33,9 @@
 
             {% if request.user.is_authenticated %}
                 <li class="nav-item ml-1 ml-lg-2 pl-lg-4 text-center pb-1">
+                    <a class="nav-link c4-nav-link-disabled">I'm {{request.user.username}}</a>
+                </li>
+                <li class="nav-item ml-1 ml-lg-2 pl-lg-4 text-center pb-1">
                     <a type='button' class="nav-link c4-nav-link c4-nav-btn" href="{% url 'auth:logout' %}">Log Out</a>
                 </li>
             {% else %}
