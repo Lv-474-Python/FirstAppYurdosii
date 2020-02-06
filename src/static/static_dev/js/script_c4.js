@@ -40,7 +40,7 @@ function congratulate_draw() {
         text: "Thank you for this tough game. It was fun to watch",
         textAlign : 'center',
         textColor : '#fff',
-        bgColor : '#b78101x',
+        bgColor : '#ffba18',
         hideAfter : false,
         stack : false,
         position : 'mid-center',

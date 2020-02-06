@@ -45,6 +45,7 @@ def activate_user(request, token=None):
             return redirect(reverse('auth:token-expired', args=[token]))
 
         user = get_object_or_404(User, username=decoded_data['username'])
+        request.session['activation_token_sent'] = False
         if not user.is_active:
             user.is_active = True
             user.save()
