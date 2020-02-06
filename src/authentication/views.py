@@ -4,9 +4,7 @@ from django.views.generic import CreateView, TemplateView
 from django.contrib.auth.models import User
 from django.urls import reverse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.http import (
-    HttpResponseRedirect, HttpResponse
-)
+from django.http import HttpResponse
 
 from .forms import RegisterForm
 from .utils import decode_token, send_activation_email
@@ -19,7 +17,7 @@ class RegisterCreateView(CreateView):
 
     def dispatch(self, request, *args, **kwargs):
         if self.request.user.is_authenticated:
-            return HttpResponseRedirect("/")
+            return redirect("c4:home")
         return super().dispatch(request, *args, **kwargs)
 
 
@@ -73,10 +71,10 @@ class TokenExpiredView(TemplateView):
         try:
             user = User.objects.get(username=username)
         except User.DoesNotExist:
-            return HttpResponseRedirect(reverse('auth:account-expired'))
+            return redirect('auth:account-expired')
 
         if user.is_active or request.user.is_active:
-            return HttpResponseRedirect(reverse('auth:login'))
+            return redirect('auth:login')
 
         context['user'] = user
         return render(request, self.template_name, context)

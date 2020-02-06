@@ -10,7 +10,7 @@ from django.views.generic import (
     DetailView, ListView
 )
 from django.http import (
-    JsonResponse, HttpResponseRedirect, Http404, HttpResponse
+    JsonResponse, Http404, HttpResponse
 )
 
 from utils.constants import (
@@ -38,7 +38,7 @@ class GameDetailView(LoginRequiredMixin, DetailView):
 
         # request user must be one of game players
         if request.user not in [self.object.player_1, self.object.player_2]:
-            return HttpResponseRedirect(reverse("auth:login"))
+            return redirect("auth:login")
 
         context = self.get_context_data()
         return render(request, self.template_name, context)
