@@ -53,10 +53,11 @@ function congratulate_draw() {
 
 
 function cellHandler(cell) {
+    let csrf_token = document.getElementsByName("csrfmiddlewaretoken")[0].value;
     let data = {};
     data.x = parseInt(cell.attributes["x"].nodeValue);
     data.y = parseInt(cell.attributes["y"].nodeValue);
-    data["csrfmiddlewaretoken"] = document.getElementsByName("csrfmiddlewaretoken")[0].value;
+    data["csrfmiddlewaretoken"] = csrf_token;
     const url = document.location.href;
     // console.log(data)
     // console.log(url)
@@ -65,6 +66,9 @@ function cellHandler(cell) {
         url: url,
         type: 'POST',
         data: data,
+        beforeSend: (xhr) => {
+            xhr.setRequestHeader("X-CSRFToken", `${csrf_token}`);
+        },
         success: ajax_success_handler,
         error: ajax_error_handler
     });

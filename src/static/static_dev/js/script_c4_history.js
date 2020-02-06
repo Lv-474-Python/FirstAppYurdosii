@@ -5,8 +5,10 @@ $(document).ready(function() {
 
 
 function choiceGameHandler(btn) {
+    let csrf_token = document.getElementsByName("csrfmiddlewaretoken")[0].value;
+
     let data = {};
-    data["csrfmiddlewaretoken"] = document.getElementsByName("csrfmiddlewaretoken")[0].value;
+    data["csrfmiddlewaretoken"] = csrf_token;
     data['game_pk'] = +btn.attributes['game_pk'].nodeValue;
     if (btn.attributes['accept']) {
         data['accept'] = +btn.attributes['accept'].nodeValue;
@@ -17,6 +19,9 @@ function choiceGameHandler(btn) {
         url: url,
         type: 'POST',
         data: data,
+        beforeSend: (xhr) => {
+            xhr.setRequestHeader("X-CSRFToken", `${csrf_token}`);
+        },
         success: (response) => {
             document.location.reload();
         },

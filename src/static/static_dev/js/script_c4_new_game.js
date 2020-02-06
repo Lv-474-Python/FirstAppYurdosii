@@ -1,15 +1,19 @@
 function requestNewGameHandler(user_row) {
     let user_username = user_row.attributes["user"].nodeValue;
+    let csrf_token = document.getElementsByName("csrfmiddlewaretoken")[0].value;
 
     const url = document.location.href;
     let data = {};
-    data["csrfmiddlewaretoken"] = document.getElementsByName("csrfmiddlewaretoken")[0].value;
+    data["csrfmiddlewaretoken"] = csrf_token;
     data['player_2_username'] = user_username;
 
     $.ajax({
         url: url,
         type: 'POST',
         data: data,
+        beforeSend: (xhr) => {
+            xhr.setRequestHeader("X-CSRFToken", `${csrf_token}`);
+        },
         success: (response) => {
             // console.log('success');
             // console.log(response);
