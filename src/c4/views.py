@@ -192,7 +192,7 @@ class UserNewGameListView(LoginRequiredMixin, ListView):
         player_2 = User.objects.filter(username=player_2_username)[0]
         player_1 = request.user
         game = Game.create(player_1=player_1, player_2=player_2, is_accepted=False)
-        status = 200 if game else 503
+        status = 200 if game is not None else 400
         return HttpResponse(status=status)
 
 
@@ -253,7 +253,5 @@ class GameHistoryListView(LoginRequiredMixin, ListView):
                 status = 404
                 # raise Http404
             except IntegrityError:
-                #TODO - спитати
-                status = 503
-
+                status = 400
         return HttpResponse(status=status)

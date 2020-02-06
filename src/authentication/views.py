@@ -88,7 +88,6 @@ class TokenExpiredView(TemplateView):
         Returns:
             HttpResponse -- response with status
         """
-        #TODO -   всі code статуси переобдумати
         token = kwargs.get('token', None)
         if request.session.get('expired_tokens', None) is None:
             request.session['expired_tokens'] = []
