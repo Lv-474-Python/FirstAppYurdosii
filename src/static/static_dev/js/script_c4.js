@@ -51,7 +51,7 @@ function congratulate_draw() {
     });
 }
 
-
+// handle making steps
 function cellHandler(cell) {
     let csrf_token = document.getElementsByName("csrfmiddlewaretoken")[0].value;
     let data = {};
@@ -217,12 +217,14 @@ function replayGameHandler(btn) {
     });
 }
 
+// replay game
 function replayGame(data) {
     let steps = data['steps'];
     clearMap(steps);
     replaySteps(steps, data['player_1_pk'], data['player_2_pk']);
 }
 
+// replay steps
 function replaySteps(steps, p1, p2) {
     for(let i = 0; i < steps.length; ++i) {
         setTimeout(() => {
@@ -239,6 +241,7 @@ function replaySteps(steps, p1, p2) {
     }
 }
 
+// clear map before replay
 function clearMap(steps) {
     for (let i = 0; i < steps.length; ++i) {
         let step = steps[i];

@@ -5,55 +5,113 @@ $(document).ready(function() {
     current_duration();
     update_page();
 
-    console.log( "ready!" );
+    console.log('Ready')
+    if (document.location.hash == '#just_won') {
+        congratulate_win();
+        document.location.hash = '';
+    } else if (document.location.hash == '#draw') {
+        congratulate_draw();
+        document.location.hash = '';
+    }
 });
 
-
-function ajax_success_handler(data) {
-    if (data['errors']) {
-        $.toast({ 
-            heading: 'Error',
-            icon: 'error',
-            text: data['errors'],
-            textAlign : 'left',
-            textColor : '#fff',
-            bgColor : '#d90400',
-            hideAfter : 2000,
-            stack : 3,
-            position : 'bottom-right',
-            allowToastClose : true,
-            showHideTransition : 'slide',
-            loader: false,
-        })
-    } else {
-        // швидкість менша при doc
-        // document.location.reload()
-        console.log(data);
-        document.open();
-        document.write(data);
-        document.close();
-        console.log('yep'); 
-    }
+// When step finished game in win for request user
+function congratulate_win() {
+    $.toast({ 
+        heading: 'You Won',
+        icon: 'success',
+        text: 'Congratulations. You won. Good job',
+        textAlign : 'center',
+        textColor : '#fff',
+        bgColor : '#0da114',
+        hideAfter : false,
+        stack : false,
+        position : 'mid-center',
+        allowToastClose : true,
+        showHideTransition : 'fade',
+        loader: false,
+    });
 }
 
+// When step finished game in draw
+function congratulate_draw() {
+    $.toast({ 
+        heading: "It's a DRAW",
+        icon: 'info',
+        text: "Thank you for this tough game. It was fun to watch",
+        textAlign : 'center',
+        textColor : '#fff',
+        bgColor : '#b78101x',
+        hideAfter : false,
+        stack : false,
+        position : 'mid-center',
+        allowToastClose : true,
+        showHideTransition : 'fade',
+        loader: false,
+    });
+}
+
+// handle making steps
 function cellHandler(cell) {
+    let csrf_token = document.getElementsByName("csrfmiddlewaretoken")[0].value;
     let data = {};
     data.x = parseInt(cell.attributes["x"].nodeValue);
     data.y = parseInt(cell.attributes["y"].nodeValue);
-    data["csrfmiddlewaretoken"] = document.getElementsByName("csrfmiddlewaretoken")[0].value;
+    data["csrfmiddlewaretoken"] = csrf_token;
     const url = document.location.href;
-    console.log(data)
-    console.log(url)
+    // console.log(data)
+    // console.log(url)
 
     $.ajax({
         url: url,
         type: 'POST',
         data: data,
+        beforeSend: (xhr) => {
+            xhr.setRequestHeader("X-CSRFToken", `${csrf_token}`);
+        },
         success: ajax_success_handler,
+        error: ajax_error_handler
+    });
+}
+
+function ajax_success_handler(response) {
+    if (response['just_won']) {
+        document.location.hash = 'just_won'
+        document.location.reload();
+    } else if (response['draw']) {
+        document.location.hash = 'draw'
+        document.location.reload();
+    } else {
+        // швидкість менша при doc
+        // document.location.reload()
+        console.log(response);
+        document.open();
+        document.write(response);
+        document.close();
+        console.log('yep'); 
+    }
+}
+
+function ajax_error_handler(response) {
+    let errors = response.responseJSON.errors;
+    $.toast({ 
+        heading: 'Error',
+        icon: 'error',
+        text: errors,
+        textAlign : 'left',
+        textColor : '#fff',
+        bgColor : '#d90400',
+        hideAfter : 2000,
+        stack : 3,
+        position : 'bottom-right',
+        allowToastClose : true,
+        showHideTransition : 'slide',
+        loader: false,
     });
 }
 
 
+// Blink current turn user
 function current_turn_blink() {
     let current_turn_class = document.getElementsByClassName("game-detail-move")[0];
     let current_opacity = 0
@@ -64,11 +122,16 @@ function current_turn_blink() {
 }
 
 
+// Duration functionality
 function current_duration() {
     // TODO - щоб дні виводило
     let game_duration = document.getElementsByClassName("game-duration-time")[0];
     let game_time = new Date(game_duration.innerText);
-    console.log(game_time);
+
+    let game_ended = document.getElementsByClassName("game-detail-map-disabled");
+    if (game_ended.length) {
+        return;
+    }
 
     setInterval(() => {
         let today = new Date();
@@ -85,36 +148,122 @@ function datetime_with_leading_zeros(dt) {
 }
 
 
+// Check to reload page
 function update_page() {
-    const url = document.location.href + 'my_move/';
+    let url_obj = new URL(document.location.href);
+    const url = url_obj['origin'] + url_obj['pathname'] + 'my_move/';
+
+    // if game is ended
+    let game_ended = document.getElementsByClassName("game-detail-map-disabled");
+    if (game_ended.length) {
+        return;
+    }
+
     $.ajax({
         url: url,
         type: 'GET',
-        success: (data => {
-            is_my_turn = data['my_move'];
+        success: (response => {
+            is_my_turn = response['my_move'];
         }),
     });
 
-    let id = 1;
+    // let id = 1;
     setInterval(() => {
         $.ajax({
             url: url,
             type: 'GET',
-            success: (data) => {
-                console.log(id);
-                console.log(is_my_turn);
-                console.log(data);
-                console.log();
-                id += 1;
+            success: (response) => {
+                // console.log(id);
+                // console.log(url);
+                // console.log(is_my_turn);
+                // console.log(data);
+                // console.log();
+                // id += 1;
 
-                if (is_my_turn != data['my_move']) {
-                    if (data['my_move'] = true) {
-                        console.log('RELOAD');
+                if (is_my_turn != response['my_move']) {
+                    if (response['my_move'] = true) {
+                        // console.log('RELOAD');
                         document.location.reload();
                     }
-                    is_my_turn = data['my_move'];
+                    is_my_turn = response['my_move'];
                 }
             },
         });
     }, 5000);
+}
+
+
+// Replay functionality
+function replayGameHandler(btn) {
+    console.log("Replay");
+    data = {}
+    data['game_pk'] = +btn.attributes['game_pk'].nodeValue;
+
+    let url_obj = new URL(document.location.href);
+    const url = url_obj['origin'] + url_obj['pathname']  + 'steps/';
+    // console.log(url);
+    $.ajax({
+        url: url,
+        type: 'GET',
+        data: data,
+        success: (response) => {
+            replayGame(response)
+        },
+        error: (response) => {
+            // console.log('error');
+            // console.log(response);
+            somethingWentWrong();
+        }
+    });
+}
+
+// replay game
+function replayGame(data) {
+    let steps = data['steps'];
+    clearMap(steps);
+    replaySteps(steps, data['player_1_pk'], data['player_2_pk']);
+}
+
+// replay steps
+function replaySteps(steps, p1, p2) {
+    for(let i = 0; i < steps.length; ++i) {
+        setTimeout(() => {
+            let step = steps[i];
+            let name = String(step['y']) + String(step['x']);
+            let cell = document.getElementsByName(name)[0];
+            let player = step['user'] == p1 ? 1 : 2;
+
+            cell.className += String(player);
+            if (i == steps.length - 1) {
+                document.location.reload();
+            }
+        }, i * 600);
+    }
+}
+
+// clear map before replay
+function clearMap(steps) {
+    for (let i = 0; i < steps.length; ++i) {
+        let step = steps[i];
+        let name = String(step['y']) + String(step['x']);
+        let cell = document.getElementsByName(name)[0];
+        cell.className = cell.className.slice(0, cell.className.length - 1);
+    }
+}
+
+function somethingWentWrong() {
+    $.toast({ 
+        heading: 'Error',
+        icon: 'error',
+        text: 'Something went wrong. Please reload page and try again.',
+        textAlign : 'left',
+        textColor : '#fff',
+        bgColor : '#d90400',
+        hideAfter : 2000,
+        stack : 3,
+        position : 'bottom-right',
+        allowToastClose : true,
+        showHideTransition : 'slide',
+        loader: false,
+    });
 }

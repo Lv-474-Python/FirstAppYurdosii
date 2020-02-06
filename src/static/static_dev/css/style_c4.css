@@ -14,13 +14,6 @@ body {
 
 
 /* Navbar */
-/* .navbar-c4 {
-    border-bottom: 1px solid #0B1033;
-    border-left: 1px solid #0B1033;
-    border-right: 1px solid #0B1033;
-    border-bottom-left-radius: 15px;
-    border-bottom-right-radius: 15px;
-} */
 .c4-nav-link,
 .c4-nav-link-disabled {
     font-size: 1.1rem;
@@ -49,6 +42,7 @@ body {
     background-color: #1B1F24;
     border: 1px solid #ffffff;
 }
+
 
 
 /* Home page: Left content */
@@ -186,6 +180,7 @@ body {
 }
 
 
+
 /* New game page */
 .new-game-title, .history-title {
     font-size: 2rem;
@@ -245,7 +240,7 @@ body {
     cursor: default;
 }
 
-
+/* Pagination */
 .pagination-form {
     display: inline;
 }
@@ -269,7 +264,6 @@ body {
 
     text-decoration: none;
 }
-
 .new-game-page-btn-disabled {
     border: 1px solid black;
     border-radius: 5px;
@@ -280,11 +274,11 @@ body {
 }
 
 
+
 /* History page */
 .history-game {
     border: 1px solid black;
     border-radius: 10px;
-    /* background-color: rgb(71, 226, 71); */
 }
 /* statuses */
 .history-game-won {
@@ -336,7 +330,6 @@ body {
 }
 .history-game-status-title-value {
     font-size: 1.05rem;
-    /* border: 1px solid black; */
 }
 .history-game-status-accept-btn {
     border: 1px solid rgb(6, 166, 6);
@@ -364,6 +357,7 @@ body {
 }
 
 
+
 /* Expired token page */
 .token-expired-title,
 .account-expired-title {
@@ -375,6 +369,7 @@ body {
     background-color: green;
     pointer-events: none;
 }
+
 
 
 /* Account expired title */

@@ -14,6 +14,7 @@ class WinMethod(enum.Enum):
     DIAGONAL_LEFT = 2
     DIAGONAL_RIGHT = 3
 
+
 class GameStatus(enum.Enum):
     LOST = "Lost"
     REJECTED = "Rejected"

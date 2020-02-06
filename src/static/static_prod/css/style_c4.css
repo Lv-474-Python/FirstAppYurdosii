@@ -8,20 +8,14 @@ body {
     height: 100%;
     max-height: 100%;
     font-family: 'Roboto', sans-serif;
-    background-color: #ffffff;
     color: #1B1F24;
+    background-color: #ffffff;
 }
 
 
 /* Navbar */
-/* .navbar-c4 {
-    border-bottom: 1px solid #0B1033;
-    border-left: 1px solid #0B1033;
-    border-right: 1px solid #0B1033;
-    border-bottom-left-radius: 15px;
-    border-bottom-right-radius: 15px;
-} */
-.c4-nav-link{
+.c4-nav-link,
+.c4-nav-link-disabled {
     font-size: 1.1rem;
     font-weight: 400;
     letter-spacing: 2px;
@@ -30,6 +24,10 @@ body {
 .c4-nav-link:hover{
     transition: 0.2s;
     color: rgb(144, 135, 135) !important;
+}
+.c4-nav-link-disabled {
+    cursor: default;
+    border-bottom: 1px solid black;
 }
 .c4-nav-btn {
     /* color: #0B1033 !important; */
@@ -46,6 +44,7 @@ body {
 }
 
 
+
 /* Home page: Left content */
 .left-content-title {
     font-weight: 500;
@@ -55,19 +54,22 @@ body {
     font-size: 1.5rem;
 }
 
-.btn-start-c4 {
+.btn-start-c4,
+.token-expired-btn {
     background-color: #1B1F24;
     color: #ffffff;
     font-size: 1.2rem;
     font-weight: 500;
 }
-.btn-start-c4:hover {
+.btn-start-c4:hover, 
+.token-expired-btn:hover {
     transition: 1s;
     background-color: #ffffff;
     border: 1px solid #1B1F24;
     color: #1B1F24;
 }
-.btn-start-c4:focus {
+.btn-start-c4:focus,
+.token-expired-btn:focus {
     box-shadow: none;
 }
 
@@ -93,22 +95,40 @@ body {
     font-size: 2rem;
     font-weight: 500;
 }
+.game-detail-title-player-1 {
+    color: #f7f735;
+}
+.game-detail-title-player-2 {
+    color: red;
+}
 
 .game-detail-move {
     font-size: 1.5rem;
     opacity: 0.8;
     /* font-weight: 300; */
 }
+.game-detail-map-disabled {
+    pointer-events: none;
+}
 
-
+.game-detail-replay-btn {
+    border: 1px solid red;
+    border-radius: 0;
+    color: #fff;
+    background-color: red;
+}
+.game-detail-replay-btn:hover {
+    transition: 0.3s;
+    color: red;
+    background-color: #fff;
+}
+.game-detail-replay-btn:focus {
+    box-shadow: none;
+}
 
 .table-c4 td{
     border: 1.8px solid #42464A;
 }
-
-/* .map-cell {
-    border: 4px solid red;
-} */
 
 .map-item {
     border: 1px solid black;
@@ -116,7 +136,6 @@ body {
     /* padding-bottom: 100%; */
     /* padding: 25px 0px; */
 }
-
 .map-item:hover {
     transition: 0.2s;
     background-color: rgb(221, 221, 221);
@@ -129,31 +148,26 @@ body {
 .game-duration-title {
     font-size: 1.5rem;
 }
-
 .game-duration-time {
     font-size: 1.5rem;
 }
 
 .map-item-player1, 
 .map-item-player2 {
-    /* border: 1px solid black; */
     border-radius: 50%;
 }
-
 .map-item-player1, 
 .player-1, 
 .player-1:hover {
     background-color: yellow;
 }
-
 .map-item-player2, 
 .player-2, 
 .player-2:hover {
     background-color: red;
 }
-
 .player-3, .player-3:hover {
-    background-color: green;
+    background-color: green ;
 }
 
 
@@ -161,44 +175,62 @@ body {
 .jq-toast-heading {
     font-size: 1.2rem !important;
 }
-
 .jq-toast-single {
     font-size: 1rem !important;
 }
 
 
+
 /* New game page */
-.new-game-title {
+.new-game-title, .history-title {
     font-size: 2rem;
 }
 
+.new-game-search-btn:hover, 
+.new-game-search-btn:focus,
+.new-game-search-input:hover,
+.new-game-search-input:focus {
+    box-shadow: none;
+}
+.new-game-search-btn,
+.new-game-search-input{
+    border: 1px solid black;
+}
+.new-game-search-btn:hover {
+    color: white;
+    background-color: black;
+}
+.new-game-search-input:focus {
+    border: 1px solid black;
+    box-shadow: .1rem .1rem .2rem .0rem #907b73;
+}
+
+.new-game-users-empty,
+.history-games-empty {
+    font-size: 1.5rem;
+}
 .new-game-user {
     border: 1px solid black;
     border-radius: 10px;
 }
-
 .new-game-user-title {
     font-size: 1.6rem;
 }
-
 .new-game-user-btn {
     border: 1px solid #1B1F24;
     color: white;
     background-color: #1B1F24;
     border-radius: 10px;
 }
-
 .new-game-user-btn:hover {
     transition: 0.8s;
     color: #1B1F24;
     background-color: white;
 }
-
 .new-game-user-btn:focus, 
 .new-game-user-btn-sent:focus {
     box-shadow: none;
 }
-
 .new-game-user-btn-sent, 
 .new-game-user-btn-sent:hover,
 .new-game-user-btn-sent:disabled {
@@ -208,7 +240,10 @@ body {
     cursor: default;
 }
 
-
+/* Pagination */
+.pagination-form {
+    display: inline;
+}
 .new-game-pagination {
     font-size: 1.5rem;
 }
@@ -219,8 +254,8 @@ body {
     color: #1B1F24;
     font-size: 1.5rem;
 }
-
 .new-game-page-btn:hover {
+    transition: 0.5s;
     border: 1px solid black;
     border-radius: 5px;
     color: white;
@@ -229,7 +264,115 @@ body {
 
     text-decoration: none;
 }
+.new-game-page-btn-disabled {
+    border: 1px solid black;
+    border-radius: 5px;
+    color: white !important;
+    background-color: #666;
+    pointer-events: none;
+    opacity: 0.5;
+}
 
-.new-game-page-btn:disabled {
-    cursor: default;
+
+
+/* History page */
+.history-game {
+    border: 1px solid black;
+    border-radius: 10px;
+}
+/* statuses */
+.history-game-won {
+    background-color: rgb(22, 238, 22);
+}
+.history-game-lost {
+    background-color: #ff1616;
+}
+.history-game-draw {
+    background-color: #ffba18;
+}
+.history-game-progress {
+    background-color: #eaea44;
+}
+.history-game-waiting {
+    background-color: rgb(198, 198, 198);
+}
+.history-game-accept {
+    background-color: #ffffff;
+}
+.history-game-declined {
+    background-color: #fd4545;
+}
+.history-game-rejected {
+    background-color: #b32828;
+}
+
+.history-game-title, 
+.history-game-status-title {
+    font-size: 1.6rem;
+}
+.history-game-title a {
+    font-size: 1.7rem;
+    color: #1B1F24;
+}
+.history-game-title a:hover {
+    font-size: 1.7rem;
+    color: #1B1F24;
+}
+.history-game-players {
+    font-size: 1.2rem;
+}
+.history-game-player {
+    font-weight: 300;
+}
+.history-game-moves {
+    font-size: 1.2rem;
+    font-weight: 300;
+}
+.history-game-status-title-value {
+    font-size: 1.05rem;
+}
+.history-game-status-accept-btn {
+    border: 1px solid rgb(6, 166, 6);
+    color: rgb(6, 166, 6);
+    background-color: #fff;
+}
+.history-game-status-accept-btn:hover {
+    border: 1px solid #fff;
+    color: #fff;
+    background-color: rgb(6, 166, 6);
+}
+.history-game-status-decline-btn {
+    border: 1px solid rgb(255, 0, 0);
+    color: rgb(255, 0, 0);
+    background-color: #fff;
+}
+.history-game-status-decline-btn:hover {
+    border: 1px solid #fff;
+    color: #fff;
+    background-color: rgb(255, 0, 0);
+}
+.history-game-status-accept-btn:focus,
+.history-game-status-decline-btn:focus {
+    box-shadow: none;
+}
+
+
+
+/* Expired token page */
+.token-expired-title,
+.account-expired-title {
+    font-size: 2rem;
+}
+.token-expired-btn-disabled,
+.token-expired-btn-disabled:hover {
+    color: white;
+    background-color: green;
+    pointer-events: none;
+}
+
+
+
+/* Account expired title */
+.account-expired-description {
+    font-size: 1.5rem;
 }

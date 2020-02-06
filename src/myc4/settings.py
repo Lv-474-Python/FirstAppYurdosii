@@ -134,6 +134,7 @@ LOGOUT_REDIRECT_URL = '/auth/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = '/auth/login'
 
+# to allow inactive users to log in
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.AllowAllUsersModelBackend',
 )

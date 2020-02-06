@@ -1,3 +1,4 @@
+// handle sending request to play
 function requestNewGameHandler(user_row) {
     let user_username = user_row.attributes["user"].nodeValue;
     let csrf_token = document.getElementsByName("csrfmiddlewaretoken")[0].value;

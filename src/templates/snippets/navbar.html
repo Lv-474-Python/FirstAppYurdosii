@@ -1,6 +1,7 @@
 <nav class="navbar navbar-expand-sm navbar-light">
     <div class='container navbar-c4'>
 
+    <!-- In future logo -->
     <a class="navbar-brand" href="{% url 'c4:home' %}">MyC4</a>
     <button 
         class="navbar-toggler" type="button" 
@@ -14,9 +15,13 @@
 
     <div class="collapse navbar-collapse" id="c4Navbar">
         <ul class="navbar-nav ml-auto">
+
+            <!-- Home link -->
             <li class="nav-item ml-1 ml-lg-2 pl-lg-4 text-center pb-1">
                 <a class="nav-link c4-nav-link" href="{% url 'c4:home' %}">Home <span class="sr-only">(current)</span></a>
             </li>
+
+            <!-- New game link -->
             <li class="nav-item ml-1 ml-lg-2 pl-lg-4 text-center pb-1">
                 {% if request.user.is_authenticated %}    
                     <a class="nav-link c4-nav-link" href="{% url 'c4:new-game' %}">New Game</a>
@@ -24,13 +29,18 @@
                     <a class="nav-link c4-nav-link disabled" href="#">New Game</a>
                 {% endif %}
             </li>
+
+            <!-- My history link -->
             <li class="nav-item ml-1 ml-lg-2 pl-lg-4 text-center pb-1">
                 <a class="nav-link c4-nav-link" href="{% url 'c4:history' %}">My History</a>
             </li>
+
+            <!-- Game rules link -->
             <li class="nav-item ml-1 ml-lg-2 pl-lg-4 text-center pb-1">
                 <a class="nav-link c4-nav-link" href="{% url 'c4:rules' %}">Rules</a>
             </li>
 
+            <!-- Log out / Sign up and Log in -->
             {% if request.user.is_authenticated %}
                 <li class="nav-item ml-1 ml-lg-2 pl-lg-4 text-center pb-1">
                     <a class="nav-link c4-nav-link-disabled">I'm {{request.user.username}}</a>
