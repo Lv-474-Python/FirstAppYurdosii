@@ -7,7 +7,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.views.generic import (
-    TemplateView, DetailView, ListView
+    DetailView, ListView
 )
 from django.http import (
     JsonResponse, HttpResponseRedirect, Http404, HttpResponse
@@ -17,16 +17,6 @@ from utils.constants import (
     C4_ROW_NUMBER, C4_COLUMN_NUMBER, MAX_MOVES_NUMBER
 )
 from .models import Game, Step
-
-
-class HomeView(TemplateView):
-    #TODO - переробити в TemplateView
-    template_name = "c4/home.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        print(context)
-        return context
 
 
 class GameDetailView(LoginRequiredMixin, DetailView):

@@ -2,14 +2,14 @@ from django.urls import include, path
 from django.views.generic import TemplateView
 
 from .views import (
-    HomeView, UserNewGameListView, GameDetailView,
+    UserNewGameListView, GameDetailView,
     GameHistoryListView, whether_my_move, game_steps
 )
 
 app_name='c4'
 
 urlpatterns = [
-    path('', HomeView.as_view(), name='home'),
+    path('', TemplateView.as_view(template_name="c4/home.html"), name='home'),
     path('rules/', TemplateView.as_view(template_name="c4/rules.html"), name='rules'),
     path('new-game/', UserNewGameListView.as_view(), name='new-game'),
     path('history/', GameHistoryListView.as_view(), name='history'),
