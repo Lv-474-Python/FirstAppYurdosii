@@ -4,7 +4,6 @@ from django.db.models import Q
 
 class GameQuerySet(models.QuerySet):
     def search(self, query, **kwargs):
-        #TODO - може зробити типу self=qs і так виводити
         """Filter queryset by query
 
         Arguments:
@@ -13,6 +12,7 @@ class GameQuerySet(models.QuerySet):
         Returns:
             QuerySet -- filtered query set
         """
+        result = self
         if query:
             requested_user = kwargs.get('requested_user', None)
             if requested_user:
@@ -22,11 +22,8 @@ class GameQuerySet(models.QuerySet):
                     Q(player_2__username__icontains=query) |
                     Q(pk__in=ids_list)
                 ).distinct()
-                # import pdb
-                # pdb.set_trace()
-                return qs
-            return self
-        return self
+                result = qs
+        return result
 
     def get_game_ids_by_status(self, query, user):
         """Return ids of games status of which for given user contains query
