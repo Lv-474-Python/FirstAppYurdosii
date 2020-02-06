@@ -1,6 +1,4 @@
 $(document).ready(function() {
-    console.log('Ready')
-
     set_token_sent_class();
 });
 
@@ -22,14 +20,11 @@ function resendTokenHandle(btn) {
             xhr.setRequestHeader("X-CSRFToken", `${csrf_token}`);
         },
         success: (response) => {
-            // console.log(sessionStorage);
             sessionStorage['activation_email_sent'] = true;
             token_sent_successfully();
             set_token_sent_class();
         },
         error: (response) => {
-            console.log('Error');
-            console.log(response);
             somethingWentWrong();
         }
     });

@@ -5,7 +5,6 @@ $(document).ready(function() {
     current_duration();
     update_page();
 
-    console.log('Ready')
     if (document.location.hash == '#just_won') {
         congratulate_win();
         document.location.hash = '';
@@ -59,8 +58,6 @@ function cellHandler(cell) {
     data.y = parseInt(cell.attributes["y"].nodeValue);
     data["csrfmiddlewaretoken"] = csrf_token;
     const url = document.location.href;
-    // console.log(data)
-    // console.log(url)
 
     $.ajax({
         url: url,
@@ -84,11 +81,9 @@ function ajax_success_handler(response) {
     } else {
         // швидкість менша при doc
         // document.location.reload()
-        console.log(response);
         document.open();
         document.write(response);
         document.close();
-        console.log('yep'); 
     }
 }
 
@@ -167,22 +162,14 @@ function update_page() {
         }),
     });
 
-    // let id = 1;
     setInterval(() => {
         $.ajax({
             url: url,
             type: 'GET',
             success: (response) => {
-                // console.log(id);
-                // console.log(url);
-                // console.log(is_my_turn);
-                // console.log(data);
-                // console.log();
-                // id += 1;
 
                 if (is_my_turn != response['my_move']) {
                     if (response['my_move'] = true) {
-                        // console.log('RELOAD');
                         document.location.reload();
                     }
                     is_my_turn = response['my_move'];
@@ -195,13 +182,11 @@ function update_page() {
 
 // Replay functionality
 function replayGameHandler(btn) {
-    console.log("Replay");
     data = {}
     data['game_pk'] = +btn.attributes['game_pk'].nodeValue;
 
     let url_obj = new URL(document.location.href);
     const url = url_obj['origin'] + url_obj['pathname']  + 'steps/';
-    // console.log(url);
     $.ajax({
         url: url,
         type: 'GET',
@@ -210,8 +195,6 @@ function replayGameHandler(btn) {
             replayGame(response)
         },
         error: (response) => {
-            // console.log('error');
-            // console.log(response);
             somethingWentWrong();
         }
     });

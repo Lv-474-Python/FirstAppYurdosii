@@ -16,15 +16,11 @@ function requestNewGameHandler(user_row) {
             xhr.setRequestHeader("X-CSRFToken", `${csrf_token}`);
         },
         success: (response) => {
-            // console.log('success');
-            // console.log(response);
             user_row.innerText = 'Request sent. Check your history';
             user_row.className += '-sent';
             user_row.setAttribute('disabled', true);
         },
         error: (response) => {
-            // console.log('error');
-            // console.log(response);
             somethingWentWrong();
         }
     });

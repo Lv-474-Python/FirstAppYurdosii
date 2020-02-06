@@ -40,7 +40,6 @@ def send_activation_email(user):
         fail_silently=False,
         html_message=html_message
     )
-    print("sent")
     return sent_mail
 
 

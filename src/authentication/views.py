@@ -97,7 +97,6 @@ class TokenExpiredView(TemplateView):
         if request.session.get('expired_tokens', None) is None:
             request.session['expired_tokens'] = []
 
-        print(f'{request.session.items()=}')
         if token is not None and token not in request.session['expired_tokens']:
             username = request.POST.get('username', None)
             user = get_object_or_404(User, username=username)
@@ -105,6 +104,5 @@ class TokenExpiredView(TemplateView):
 
             request.session['expired_tokens'].append(token)
             request.session.modified = True
-            print('email sent')
             return HttpResponse(status=200)
         return HttpResponse(status=400)

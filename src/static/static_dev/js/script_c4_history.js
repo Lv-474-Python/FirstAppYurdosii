@@ -1,8 +1,3 @@
-$(document).ready(function() {
-    console.log( "ready!" );
-
-});
-
 // handle accept or decline choice
 function choiceGameHandler(btn) {
     let csrf_token = document.getElementsByName("csrfmiddlewaretoken")[0].value;
