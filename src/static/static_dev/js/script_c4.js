@@ -51,7 +51,7 @@ function congratulate_draw() {
     });
 }
 
-// handle making steps
+// Handle making steps
 function cellHandler(cell) {
     let csrf_token = document.getElementsByName("csrfmiddlewaretoken")[0].value;
     let data = {};

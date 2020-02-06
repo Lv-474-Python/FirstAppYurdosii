@@ -8,8 +8,9 @@ from ..models import Game, MapValue
 register = template.Library()
 
 @register.filter
-def my_index(values, i): #, *args, **kwargs):
-    """return element of list by index
+def my_index(values, i):
+    """Return element of list by index.
+    In case element of list by index is MapValue instance - return its value
 
     Arguments:
         values {list} -- list
@@ -25,7 +26,7 @@ def my_index(values, i): #, *args, **kwargs):
 
 @register.filter
 def change_class(class_value, addition):
-    """Change class
+    """Change style class
 
     Arguments:
         class_value {string} -- class to which should be added addition
@@ -100,7 +101,7 @@ def game_index(all_games, game):
 
 @register.filter
 def get_disabled_game_class(game):
-    """Return game class if game ended or not yet started
+    """Return disabled game class if game ended or not yet started
 
     Arguments:
         game {Game} -- Game instance
@@ -114,7 +115,7 @@ def get_disabled_game_class(game):
 
 @register.filter
 def get_player_ended_game_class(game, player):
-    """Return end game class for patricular player
+    """Return ended game class for particular player
 
     Arguments:
         game {Game} -- Game instance

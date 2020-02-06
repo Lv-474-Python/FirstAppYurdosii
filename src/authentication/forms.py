@@ -22,7 +22,7 @@ class RegisterForm(forms.ModelForm):
         fields = ("username", "email")
 
     def clean_username(self):
-        """Check whether user with provided username exists
+        """Check whether user with provided username already exists
 
         Raises:
             forms.ValidationError: if user with this username already exists
@@ -37,7 +37,7 @@ class RegisterForm(forms.ModelForm):
         return username
 
     def clean_email(self):
-        """Check whether user with provided email exists
+        """Check whether user with provided email already exists
 
         Raises:
             forms.ValidationError: if user with this email already exists
@@ -73,7 +73,7 @@ class RegisterForm(forms.ModelForm):
             commit {bool} -- whether saving should be committed (default: {True})
 
         Returns:
-            django.contrib.auth.models.User -- created user
+            User -- created user
         """
         user = super(RegisterForm, self).save(commit=False)
         user.set_password(self.cleaned_data["password1"])

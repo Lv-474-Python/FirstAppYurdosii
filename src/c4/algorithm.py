@@ -63,7 +63,7 @@ def change_map(game_map, win_case):
             game_map[row+i][col+i] = MapValue.WINNER
 
 def check_position(game_map, row, col):
-    """Check if step on (row, col) (y, x) inside win combinations
+    """Check if step on (row, col) (y, x) is inside win combinations
 
     Arguments:
         game_map {matrix} -- game map

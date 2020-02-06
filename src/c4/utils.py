@@ -10,7 +10,7 @@ class GameQuerySet(models.QuerySet):
             query {str} -- search query
 
         Returns:
-            QuerySet -- filtered query set
+            QuerySet -- filtered queryset
         """
         result = self
         if query:
@@ -44,5 +44,4 @@ class GameManager(models.Manager):
         return GameQuerySet(self.model, using=self._db)
 
     def search(self, query, *args, **kwargs):
-        # print('Manager')
         return self.get_queryset().search(query, *args, **kwargs)

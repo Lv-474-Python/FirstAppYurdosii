@@ -44,7 +44,7 @@ class Game(models.Model):
 
     # Metadata
     class Meta:
-        ordering = ['-pk'] # '-end'
+        ordering = ['-pk']
         verbose_name = "Game"
         verbose_name_plural = "Games"
 
@@ -63,12 +63,12 @@ class Game(models.Model):
         Returns:
             string -- representing of Game object
         """
-        return f'Game#{self.pk} - {self.player_1.username} vs ' + \
-        f'{self.player_2.username}. Accepted - {self.is_accepted}'
+        return (f'Game#{self.pk} - {self.player_1.username} vs '
+                f'{self.player_2.username}. Accepted - {self.is_accepted}')
 
     @property
     def moves_number(self):
-        """Return number of this game steps
+        """Return moves (steps) number of this game
 
         Returns:
             int -- moves number
@@ -85,7 +85,7 @@ class Game(models.Model):
             is_accepted {bool} -- whether game is accepted by player_2
 
         Returns:
-            Game -- created Game object
+            Game / NoneType -- created Game object or None
         """
         game = Game(player_1=player_1, player_2=player_2, is_accepted=is_accepted)
         try:
@@ -96,6 +96,8 @@ class Game(models.Model):
 
     def get_game_map(self):
         """Return map of steps of the current game.
+        Check if game just had a winner - set end_datetime and winner
+        Check if game just had last available step (42th) - set end_datetime
 
         Returns:
             list -- matrix of steps (map)
@@ -162,7 +164,7 @@ class Game(models.Model):
         return status.value
 
     def get_game_steps(self):
-        """Get steps of particular gam
+        """Get steps of particular game
 
         Returns:
             QuerySet -- game's steps
@@ -171,6 +173,8 @@ class Game(models.Model):
 
     def set_game_accepted(self, accept):
         """Accept / Decline game
+        Set start_datetime.
+        If game is declined - set end_datetime
 
         Arguments:
             accept {bool} -- whether game is accepted
@@ -223,7 +227,7 @@ class Step(models.Model):
 
         Arguments:
             game {Game} -- game object
-            user {django.contrib.auth.models.User} -- user that made a move
+            user {User} -- user that made a move
             step_x {int} -- step's x
             step_y {int} -- step's y
 
@@ -245,7 +249,7 @@ class Step(models.Model):
 
         Arguments:
             game {Game} --
-            request_user {django.contrib.auth.models.User} -- user that requested to make a move
+            request_user {User} -- user that requested to make a move
             step_x {int} -- step's x
 
         Returns:

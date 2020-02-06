@@ -82,7 +82,7 @@ class GameDetailView(LoginRequiredMixin, DetailView):
         """Get current turn user username
 
         Arguments:
-            request_user {django.contrib.auth.models.User} -- user that requested to make a move
+            request_user {User} -- user that requested to make a move
 
         Returns:
             string --
@@ -129,7 +129,7 @@ def whether_my_move(request, *args, **kwargs):
         raise Http404
 
 def game_steps(request, *args, **kwargs):
-    """Return steps of game consisting of 'x', 'y', 'user'
+    """Return steps of game consisting of 'x', 'y', 'user' fields
 
     Arguments:
         request {WSGIRequest} -- request
@@ -171,6 +171,17 @@ class UserNewGameListView(LoginRequiredMixin, ListView):
         return result
 
     def get(self, request, *args, **kwargs):
+        """Get search query.
+        If it is None - set search query and paginator page url parameters
+        and redirect to result page
+        Otherwise - render new game page
+
+        Arguments:
+            request {WSGIRequest} -- request
+
+        Returns:
+            HttpResponseRedirect / HttpResponse -- response
+        """
         query = request.GET.get('q', None)
         if query is None:
             url_reversed = reverse('c4:new-game')
@@ -179,14 +190,13 @@ class UserNewGameListView(LoginRequiredMixin, ListView):
         return super().get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        #TODO - статуси
-        """Post request for creating new game
+        """Create new game and return response with status code
 
         Arguments:
             request {WSGIRequest} -- request
 
         Returns:
-            JsonResponse -- JsonResponse with status (whether post request was successful)
+            HttpResponse -- HttpResponse with status code
         """
         player_2_username = request.POST['player_2_username']
         player_2 = User.objects.filter(username=player_2_username)[0]
@@ -221,6 +231,17 @@ class GameHistoryListView(LoginRequiredMixin, ListView):
         return context
 
     def get(self, request, *args, **kwargs):
+        """Get search query.
+        If it is None - set search query and paginator page url parameters
+        and redirect to result page
+        Otherwise - render history page
+
+        Arguments:
+            request {WSGIRequest} -- request
+
+        Returns:
+            HttpResponseRedirect / HttpResponse -- response
+        """
         query = request.GET.get('q', None)
         if query is None:
             url_reversed = reverse('c4:history')
@@ -231,13 +252,13 @@ class GameHistoryListView(LoginRequiredMixin, ListView):
 
 
     def post(self, request, *args, **kwargs):
-        """Post request for accept / decline game
+        """Accept / decline game and return response with status code
 
         Arguments:
             request {WSGIRequest} -- request
 
         Returns:
-            JsonResponse -- JsonResponse with code status
+            HttpResponse -- HttpResponse with status code
         """
         accept = request.POST.get('accept', None)
         if accept is None:
@@ -251,7 +272,6 @@ class GameHistoryListView(LoginRequiredMixin, ListView):
                 status = 200
             except Game.DoesNotExist:
                 status = 404
-                # raise Http404
             except IntegrityError:
                 status = 400
         return HttpResponse(status=status)

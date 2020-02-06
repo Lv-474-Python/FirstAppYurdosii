@@ -72,7 +72,7 @@ def decode_token(token, verify=True):
         leeway {int} -- part of expiration time during which expired token still can be decoded
 
     Returns:
-        dict -- decoded_data
+        dict -- decoded data
     """
     key = settings.SECRET_KEY
     algorithm = settings.JWT_ALGORITHM

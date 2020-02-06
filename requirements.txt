@@ -1,10 +1,13 @@
 asgiref==3.2.3
 astroid==2.3.3
 Django==3.0.2
+django-mathfilters==0.4.0
+django-npm==1.0.0
 isort==4.3.21
 lazy-object-proxy==1.4.3
 mccabe==0.6.1
 psycopg2==2.8.4
+PyJWT==1.7.1
 pylint==2.4.4
 pylint-django==2.0.13
 pylint-plugin-utils==0.6
