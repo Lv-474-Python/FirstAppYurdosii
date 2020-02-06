@@ -28,7 +28,7 @@ def send_activation_email(user):
     html_message = f"""
         <div class="container">
             <p class="text-center">Hello {user.username}. Welcome to MyC4</p>
-            <p>Click on <a href="{full_path}">this link</a> and your account will be active and you will be able to play some connect 4.</p>
+            <p>Click on <a href="{full_path}">this link</a> to activate your account. Only then you will be able to play connect 4.</p>
             <h6>This link is active only for 15 minutes</h6>
         </div>
     """
