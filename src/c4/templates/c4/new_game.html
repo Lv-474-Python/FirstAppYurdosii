@@ -38,6 +38,13 @@
 
         <!-- Players to play with -->
         <div class='new-game-users mt-3'>
+
+            {% if not users %}
+                <div class="new-game-users-empty text-center mt-4 pt-2 mb-4">
+                    No users found
+                </div>
+            {% endif %}
+
             {% for user in users  %}
                 <div class='new-game-user px-4 py-3 mb-2 mx-5'>
                 <div class='row'>

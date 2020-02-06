@@ -210,7 +210,10 @@ body {
     box-shadow: .1rem .1rem .2rem .0rem #907b73;
 }
 
-
+.new-game-users-empty,
+.history-games-empty {
+    font-size: 1.5rem;
+}
 .new-game-user {
     border: 1px solid black;
     border-radius: 10px;
@@ -282,9 +285,6 @@ body {
     border: 1px solid black;
     border-radius: 10px;
     /* background-color: rgb(71, 226, 71); */
-}
-.history-no-history-text {
-    font-size: 1.5rem;
 }
 /* statuses */
 .history-game-won {
