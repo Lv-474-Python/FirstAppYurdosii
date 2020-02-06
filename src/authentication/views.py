@@ -4,7 +4,7 @@ from django.views.generic import CreateView, TemplateView
 from django.contrib.auth.models import User
 from django.urls import reverse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 
 from .forms import RegisterForm
 from .utils import decode_token, send_activation_email
@@ -19,6 +19,12 @@ class RegisterCreateView(CreateView):
         if self.request.user.is_authenticated:
             return redirect("c4:home")
         return super().dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        """If the form is valid, save the associated model."""
+        self.object = form.save()
+        self.request.session['activation_token_sent'] = True
+        return super().form_valid(form)
 
 
 def activate_user(request, token=None):
