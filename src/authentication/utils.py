@@ -21,7 +21,6 @@ def send_activation_email(user):
     recipient_list = [user.email]
     token = generate_token(user)
     path_ = reverse('auth:activation', kwargs={"token": token})
-
     full_path = "http://" + settings.URL_DOMAIN + path_
 
     message = 'Thanks for subscribe. Glad you are with us.'
@@ -32,6 +31,7 @@ def send_activation_email(user):
             <h6>This link is active only for 15 minutes</h6>
         </div>
     """
+
     sent_mail = send_mail(
         subject,
         message,

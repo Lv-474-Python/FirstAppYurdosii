@@ -7,6 +7,14 @@ register = template.Library()
 
 @register.filter
 def handle_errors(errors):
+    """Handle login form errors
+
+    Arguments:
+        errors {dict} -- errors
+
+    Returns:
+        str -- error
+    """
     error = errors['__all__'][0]
     if 'inactive' in error:
         return "Your account is inactive. Please check your email"

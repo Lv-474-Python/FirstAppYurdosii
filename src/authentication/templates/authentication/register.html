@@ -5,6 +5,7 @@
 {% block content %}
     <div class='row h-100'>
         <div class='col-12, col-md-6 auth align-self-center'>
+
             <!-- Sign Up title-->
             <div class='title text-center'>
                 Sign up
@@ -13,6 +14,7 @@
             <!-- Sign up form -->
             <form method="post" action="{% url 'auth:signup' %}">{% csrf_token %}
                 <div class="form-group">
+
                     <!-- Username input -->
                     <div class="form-row">
                         <div class="form-group col-8 offset-2 col-md-8 offset-md-2 col-lg-6 offset-lg-3 mt-4">
@@ -97,11 +99,12 @@
                             <p class='to-login'>Already have an account? <a class='link-login' href='{% url 'auth:login' %}'>Log In</a></p>
                         </div>
                     </div>
+
                 </div>
             </form>
 
-        {% comment %} {{form.as_p}} {% endcomment %}
         </div>
+
         <div class='col-md-6 other-content'>
         </div>
     </div>

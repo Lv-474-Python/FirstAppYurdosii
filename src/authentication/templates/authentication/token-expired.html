@@ -9,10 +9,13 @@
 
 {% block content %}
 <div class="container mt-5">
+
+    <!-- Title -->
     <div class="token-expired-title">
         Current token expired
     </div>
 
+    <!-- Button to resend -->
     {% csrf_token %}
     <div class="mt-3">
         <button 
@@ -20,6 +23,6 @@
             username="{{user.username}}"
             onclick="resendTokenHandle(this)">Resend</button>
     </div>
-</div>
 
+</div>
 {% endblock content %}
