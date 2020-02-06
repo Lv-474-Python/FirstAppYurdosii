@@ -4,10 +4,19 @@ from django.db.models import Q
 
 class GameQuerySet(models.QuerySet):
     def search(self, query, **kwargs):
+        #TODO - може зробити типу self=qs і так виводити
+        """Filter queryset by query
+
+        Arguments:
+            query {str} -- search query
+
+        Returns:
+            QuerySet -- filtered query set
+        """
         if query:
             requested_user = kwargs.get('requested_user', None)
             if requested_user:
-                ids_list = self.search_by_title(query, requested_user)
+                ids_list = self.get_game_ids_by_status(query, requested_user)
                 qs = self.filter(
                     Q(player_1__username__icontains=query) |
                     Q(player_2__username__icontains=query) |
@@ -19,7 +28,16 @@ class GameQuerySet(models.QuerySet):
             return self
         return self
 
-    def search_by_title(self, query, user):
+    def get_game_ids_by_status(self, query, user):
+        """Return ids of games status of which for given user contains query
+
+        Arguments:
+            query {str} -- search query
+            user {User} -- user
+
+        Returns:
+            list -- list of game ids
+        """
         ids_list = [game.pk for game in self if query.lower() in game.get_game_status(user).lower()]
         return ids_list
 

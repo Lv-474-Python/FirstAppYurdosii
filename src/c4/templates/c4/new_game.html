@@ -46,28 +46,41 @@
             {% endif %}
 
             {% for user in users  %}
+
+                <!-- User item -->
                 <div class='new-game-user px-4 py-3 mb-2 mx-5'>
                 <div class='row'>
+
+                    <!-- User username -->
                     <div class='col-12 col-sm-4 col-lg-6 text-center text-sm-left'>
                         <div class='new-game-user-title'>
                             {{user.username}}
                         </div>
                     </div>
+
+                    <!-- Sending request button -->
                     <div class='col-12 col-sm-8 col-lg-6'>
+
+                        <!-- Request is already sent -->
                         {% if request.user|is_game_with_false_accepted_exist:user%}
                             <button type="button" 
                             class="btn py-2 w-100 new-game-user-btn-sent"
                             user="{{user.username}}" onclick="requestNewGameHandler(this)"
                             disabled="True">Request sent. Check your history</button>
+
+                        <!-- Request isn't sent yet -->
                         {% else %}
                         <button type="button" 
                             class="btn py-2 w-100 new-game-user-btn"
                             user="{{user.username}}" onclick="requestNewGameHandler(this)">Send request to play</button>
                         {% endif %}
+
                     </div>
+
                 </div>
                 </div>
             {% endfor %}
+
         </div>
 
         <!-- Pagination -->

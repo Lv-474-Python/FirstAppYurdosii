@@ -36,7 +36,7 @@
             </div>
         </div>
 
-        <!-- Players to play with -->
+        <!-- Game history -->
         <div class='history-games mt-3'>
 
         {% if not games %}
@@ -47,6 +47,7 @@
 
         {% for game in games %}
 
+            <!-- Game item -->
             {% with status_class=game|get_game_status_class:request.user %}
             <div class="{{'px-4 py-3 mb-2 mx-5 history-game history-game-'|change_class:status_class}}">
             {% endwith %}

@@ -20,6 +20,7 @@ from .models import Game, Step
 
 
 class HomeView(TemplateView):
+    #TODO - переробити в TemplateView
     template_name = "c4/home.html"
 
     def get_context_data(self, **kwargs):
@@ -45,6 +46,7 @@ class GameDetailView(LoginRequiredMixin, DetailView):
         # get_context_data is called by super().get()
         super(GameDetailView, self).get(request, *args, **kwargs)
 
+        # request user must be one of game players
         if request.user not in [self.object.player_1, self.object.player_2]:
             return HttpResponseRedirect(reverse("auth:login"))
 
@@ -52,6 +54,18 @@ class GameDetailView(LoginRequiredMixin, DetailView):
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
+        """Get step data. Check if step can be made. If so - make step.
+        If not - return JsonResponse with 422 status code. Then check
+        if step finished game in win for request user - return JsonResponse with just_won = True
+        if step finished game in draw - return JsonResponse with draw = True
+        Otherwise render game detail page
+
+        Arguments:
+            request {WSGIRequest} -- request
+
+        Returns:
+            JsonResponse / HttpResponse  -- response
+        """
         self.get(request, *args, **kwargs)
 
         data = request.POST

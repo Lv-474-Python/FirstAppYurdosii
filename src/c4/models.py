@@ -68,6 +68,11 @@ class Game(models.Model):
 
     @property
     def moves_number(self):
+        """Return number of this game steps
+
+        Returns:
+            int -- moves number
+        """
         return self.steps.count()
 
     @staticmethod
