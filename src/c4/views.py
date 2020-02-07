@@ -170,25 +170,6 @@ class UserNewGameListView(LoginRequiredMixin, ListView):
             result = result.filter(username__icontains=query)
         return result
 
-    def get(self, request, *args, **kwargs):
-        """Get search query.
-        If it is None - set search query and paginator page url parameters
-        and redirect to result page
-        Otherwise - render new game page
-
-        Arguments:
-            request {WSGIRequest} -- request
-
-        Returns:
-            HttpResponseRedirect / HttpResponse -- response
-        """
-        query = request.GET.get('q', None)
-        if query is None:
-            url_reversed = reverse('c4:new-game')
-            url_encoded = urlencode({'q': '', 'page': 1})
-            return redirect(f"{url_reversed}?{url_encoded}")
-        return super().get(request, *args, **kwargs)
-
     def post(self, request, *args, **kwargs):
         """Create new game and return response with status code
 
