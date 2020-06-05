@@ -1,6 +1,6 @@
 asgiref==3.2.3
 astroid==2.3.3
-Django==3.0.2
+Django==3.0.7
 django-mathfilters==0.4.0
 django-npm==1.0.0
 isort==4.3.21
